@@ -5,9 +5,6 @@ public class logIn {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Bienvenue, souhaité vous vous connecter en tant que résident ou intervenant?");
-        String nom = scanner.nextLine();
-
         String username = "";
         while (username.isEmpty()) {
             System.out.println("Entrer un nom d'utilisateur valide");
@@ -20,9 +17,23 @@ public class logIn {
             password = scanner.nextLine();
         }
 
+        String type = "";
+        System.out.println("Souhaiteriez-vous vous connecter en tant que résident ou intervenant?");
+        while (type.isEmpty() || (!type.equals("R") && !type.equals("I"))) { 
+            System.out.println("Tapez R pour résident et I pour intervenant");
+            type = scanner.nextLine();
+        }    
+
+        if (type.equals("R")) {
+            user = new Resident(firstName, lastName, email, password);
+        } else {
+            user = new Intervenant(firstName, lastName, email, password);
+        }
+        
         System.out.println("Bienvenue, vous êtes maintenant connecté(e)");
 
-        // il reste a faire apparaitre les elements du menu
+        user.displayMenu();
+
         System.exit(0);
     }
 }
