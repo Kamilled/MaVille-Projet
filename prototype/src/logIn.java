@@ -5,14 +5,24 @@ public class logIn {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Bienvenue, souhaité vous vous connecter en tant que résident ou intervenant?");
-        String nom = scanner.nextLine();
+        // Connection en tant que résident ou intervenant
 
-        String username = "";
-        while (username.isEmpty()) {
-            System.out.println("Entrer un nom d'utilisateur valide");
-            username = scanner.nextLine();
+        String type = "";
+        System.out.println("Souhaiteriez-vous vous connecter en tant que résident ou intervenant?");
+        while (type.isEmpty() || (!(type.equals("R")||type.equals("r")) && !(type.equals("I")|| type.equals("i")))) {
+            System.out.println("Tapez R pour résident et I pour intervenant");
+            type = scanner.nextLine();
         }
+
+        // Demande de l'adresse courriel pour la connection 
+
+        String email = "";
+        while (email.isEmpty()) {
+            System.out.println("Entrer un adresse courriel valide");
+            email = scanner.nextLine();
+        }
+
+        // Demande du mot de passe pour la connection
 
         String password = "";
         while (password.isEmpty()) {
@@ -20,9 +30,25 @@ public class logIn {
             password = scanner.nextLine();
         }
 
-        System.out.println("Bienvenue, vous êtes maintenant connecté(e)");
+        // Création de l'utilisateur
 
-        // il reste a faire apparaitre les elements du menu
+        Resident user;
+
+        // le nom est précisé à l'inscription donc pour le moment le nom par défault est John Doe
+
+        if (type.equals("R")) {
+            user = new Resident("Doe", "John", email, password);     
+        } else {
+            user = new Intervenant("Doe", "John", email, password);
+        }
+
+        // Affichage du message de bienvenue/ menu
+        
+        System.out.println("Bienvenue " + user.getFirstName() + ", vous êtes maintenant connecté(e)!");
+
+        user.displayMenu();
+
         System.exit(0);
     }
 }
+
