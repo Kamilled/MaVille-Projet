@@ -1183,10 +1183,143 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
 <div class="scenario" id="cu-1">
     <div class="scenario-meta">
         <h4 class="cu-name">
-            <strong>CU:</strong> Permettre une planification participative/Soumettre une requête de travail/Signaler un problème à la ville
+            <strong>CU:</strong> Permettre une planification participative
         </h4>
         <p class="cu-goal">
             <strong>Objectif:</strong> L'utilisateur soumet des besoins et peut interagir avec l'équipe de travaux et le gouvernement
+        </p>
+        
+        <hr>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Acteurs</h5>
+            <ul class="bare-list cu-actors">
+                <li class="cu-actor">Résident (Principal)</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Préconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">L'utilisateur s'est connecté avec succès</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Postconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">Téléchargement réussi</li>
+            </ul>
+        </div>
+
+        <div class="cu-part cu-part--notes">
+            <h5 class="cu-part-title">Notes</h5>
+            <p class="cu-notes"></p>
+        </div>
+    </div>
+    <div class="scenario-main">
+        <h5 class="scenario-main-title">Scénario principal</h5>
+        <ol class="scenario-main-steps">
+            <li class="scenario-main-step">Le résident clique sur n'importe quel projet de travaux sur la page d'accueil et trouve le bouton de dialogue</li>
+            <li class="scenario-main-step">Ensuite, il choisit l'une des options suivantes : participer à la planification, soumettre une demande, ou signaler un problème à la ville</li>
+            <li class="scenario-main-step">Dans la section participation à la planification, le résident peut choisir ses préférences de dates pour les travaux ainsi que des retours d'information, visibles publiquement</li>
+            <li class="scenario-main-step">Cliquez sur télécharger et revenir au menu précédent.</li>
+            
+            
+        </ol>
+
+       <div class="scenario-alt">
+            <h5 class="scenario-alt-title">Scénarios alternatifs</h5>
+            <ol class="bare-list scenario-alt-steps">
+                <li class="scenario-alt-step" value="1">
+                    Informations incorrectes
+                    <ol class="bare-list">
+                        <li value="1">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
+                        <li value="1">Retour à la page de saisie</li>
+                    </ol>
+        </div>
+    </div>
+</div>
+
+
+
+<h3 class="subsection-title">Scénarios</h3>
+
+<div class="scenario" id="cu-1">
+    <div class="scenario-meta">
+        <h4 class="cu-name">
+            <strong>CU:</strong> Soumettre une requête de travail
+        </h4>
+        <p class="cu-goal">
+            <strong>Objectif:</strong> L'utilisateur soumet des besoins et peut être capable de trouver un intervenant approprié pour s'aider.
+        </p>
+        
+        <hr>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Acteurs</h5>
+            <ul class="bare-list cu-actors">
+                <li class="cu-actor">Résident (Principal)</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Préconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">L'utilisateur s'est connecté avec succès</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Postconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">Téléchargement réussi</li>
+            </ul>
+        </div>
+
+        <div class="cu-part cu-part--notes">
+            <h5 class="cu-part-title">Notes</h5>
+            <p class="cu-notes"></p>
+        </div>
+    </div>
+    <div class="scenario-main">
+        <h5 class="scenario-main-title">Scénario principal</h5>
+        <ol class="scenario-main-steps">
+            <li class="scenario-main-step">Le résident clique sur n'importe quel projet de travaux sur la page d'accueil et trouve le bouton de dialogue</li>
+            <li class="scenario-main-step">Ensuite, il choisit l'une des options suivantes : participer à la planification, soumettre une demande, ou signaler un problème à la ville</li>
+            
+            <li class="scenario-main-step">Dan le section soumettre une demande,Le résident remplit les informations nécessaires et soumet la demande</li>
+            <li class="scenario-main-step">Après réception de la demande, l'utilisateur peut accepter ou refuser les services de l'intervenant.</li>
+            <li class="scenario-main-step">Le résident retourne à la page précédente </li>
+           
+
+        <div class="scenario-alt">
+            <h5 class="scenario-alt-title">Scénarios alternatifs</h5>
+            <ol class="bare-list scenario-alt-steps">
+                <li class="scenario-alt-step" value="1">
+                    Informations incorrectes
+                    <ol class="bare-list">
+                        <li value="1">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
+                        <li value="1">Retour à la page de saisie</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+
+
+
+<h3 class="subsection-title">Scénarios</h3>
+
+<div class="scenario" id="cu-1">
+    <div class="scenario-meta">
+        <h4 class="cu-name">
+            <strong>CU:</strong> Signaler un problème à la ville
+        </h4>
+        <p class="cu-goal">
+            <strong>Objectif:</strong> Les résidents communiquent directement les problèmes qu'ils constatent au gouvernement.
         </p>
         
         <hr>
@@ -1222,29 +1355,26 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
         <ol class="scenario-main-steps">
             <li class="scenario-main-step">Le résident clique sur n'importe quel projet de travaux sur la page d'accueil et trouve le bouton de dialogue</li>
             <li class="scenario-main-step">Ensuite, il choisit l'une des options suivantes : participer à la planification, soumettre une demande, ou signaler un problème à la ville</li>
-            <li class="scenario-main-step">Dans la section participation à la planification, le résident peut choisir ses préférences de dates pour les travaux ainsi que des retours d'information, visibles publiquement</li>
-            <li class="scenario-main-step">Le résident peut revenir à la page précédente et cliquer sur le bouton "Demande de travail" pour solliciter de l'aide</li>
-            <li class="scenario-main-step">Le résident remplit les informations nécessaires et soumet la demande</li>
-            <li class="scenario-main-step">Après réception de la demande, l'équipe décide d'accepter ou de refuser</li>
-            <li class="scenario-main-step">Le résident retourne à la page précédente et clique sur le bouton "Signaler un problème à la ville"</li>
-            <li class="scenario-main-step">L'utilisateur remplit les informations et les télécharge</li>
+           
+            <li class="scenario-main-step">Dans le sction signaler un problèmd,Les résidents remplissent les sections spécifiques de la zone et décrivent clairement le problème.</li>
+            <li class="scenario-main-step">Les résidents téléchargent et sauvegardent.</li>
+         <li class="scenario-main-step">Le résident retourne à la page précédente </li>
         </ol>
 
         <div class="scenario-alt">
             <h5 class="scenario-alt-title">Scénarios alternatifs</h5>
             <ol class="bare-list scenario-alt-steps">
-                <li class="scenario-alt-step" value="5">
+                <li class="scenario-alt-step" value="1">
                     Informations incorrectes
                     <ol class="bare-list">
-                        <li value="5">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
-                        <li value="5">Retour à la page de saisie</li>
+                        <li value="1">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
+                        <li value="1">Retour à la page de saisie</li>
                     </ol>
                 </li>
             </ol>
         </div>
     </div>
 </div>
-
 
 
 
