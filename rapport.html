@@ -1442,10 +1442,10 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
 <div class="scenario" id="cu-1">
     <div class="scenario-meta">
         <h4 class="cu-name">
-            <strong>CU:</strong> Soumettre un nouveau projet de travaux/Mettre à jour les informations d'un chantier
+            <strong>CU:</strong> Soumettre un nouveau projet de travaux
         </h4>
         <p class="cu-goal">
-            <strong>Objectif:</strong> L'intervenant peut soumettre et mettre à jour les informations des travaux
+            <strong>Objectif:</strong> L'intervenant peut soumettre les informations des travaux
         </p>
 
         <hr>
@@ -1467,7 +1467,7 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
         <div class="cu-part">
             <h5 class="cu-part-title">Postconditions</h5>
             <ul class="bare-list cu-conditions">
-                <li class="dash">Le téléchargement ou la mise à jour a réussi</li>
+                <li class="dash">Le téléchargement réussi</li>
             </ul>
         </div>
 
@@ -1481,7 +1481,7 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
         <ol class="scenario-main-steps">
             <li class="scenario-main-step">L'intervenant télécharge un nouveau projet de travaux sur la page d'accueil et le définit à l'état "Prévu"</li>
             <li class="scenario-main-step">L'intervenant doit entrer des informations détaillées pour le projet</li>
-            <li class="scenario-main-step">L'intervenant peut modifier les informations et l'état à tout moment</li>
+            
             <li class="scenario-main-step">L'intervenant revient à la page précédente pour continuer à soumettre d'autres projets</li>
         </ol>
 
@@ -1496,12 +1496,71 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
                     </ol>
                 </li>
             </ol>
+            
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+
+
+                <h3 class="subsection-title">Scénarios</h3>
+
+<div class="scenario" id="cu-1">
+    <div class="scenario-meta">
+        <h4 class="cu-name">
+            <strong>CU:</strong> Mettre à jour les informations d'un chantier
+        </h4>
+        <p class="cu-goal">
+            <strong>Objectif:</strong> L'intervenant peut mettre à jour les informations des travaux
+        </p>
+
+        <hr>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Acteurs</h5>
+            <ul class="bare-list cu-actors">
+                <li class="cu-actor">Intervenant (Principal)</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Préconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">L'intervenant s'est connecté avec succès</li>
+            </ul>
+        </div>
+
+        <div class="cu-part">
+            <h5 class="cu-part-title">Postconditions</h5>
+            <ul class="bare-list cu-conditions">
+                <li class="dash">La mise à jour a réussi</li>
+            </ul>
+        </div>
+
+        <div class="cu-part cu-part--notes">
+            <h5 class="cu-part-title">Notes</h5>
+            <p class="cu-notes">Aucun</p>
+        </div>
+    </div>
+    <div class="scenario-main">
+        <h5 class="scenario-main-title">Scénario principal</h5>
+        <ol class="scenario-main-steps">
+            
+            <li class="scenario-main-step">L'intervenant peut modifier les informations et l'état à tout moment</li>
+            <li class="scenario-main-step">L'intervenant revient à la page précédente pour continuer à soumettre d'autres projets</li>
+        </ol>
+
+        <div class="scenario-alt">
+            <h5 class="scenario-alt-title">Scénarios alternatifs</h5>
+            
             <ol class="bare-list scenario-alt-steps">
-                <li class="scenario-alt-step" value="4">
+                <li class="scenario-alt-step" value="1">
                     Le système indique que les informations ne correspondent pas aux préférences des résidents
                     <ol class="bare-list">
-                        <li value="4">L'intervenant peut choisir de modifier les informations</li>
-                        <li value="4">Retour à la page de modification</li>
+                        <li value="1">L'intervenant peut choisir de modifier les informations</li>
+                        <li value="1">Retour à la page de modification</li>
                     </ol>
                 </li>
             </ol>
