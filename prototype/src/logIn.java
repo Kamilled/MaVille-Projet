@@ -48,7 +48,6 @@ public class logIn {
 
         user.displayMenu();
 
-        System.exit(0);
     }
 }
 
