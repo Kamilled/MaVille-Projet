@@ -1109,7 +1109,7 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
     <div class="scenario-main">
         <h5 class="scenario-main-title">Scénario principal</h5>
         <ol class="scenario-main-steps">
-            <li class="scenario-main-step">L'utilisateur peut voir les projets de travaux prévus dans les trois prochains mois sur la page d'accueil et peut les filtrer par région, catégorie et rue.</li>
+            <li class="scenario-main-step">L'utilisateur peut voir les projets de travaux prévus dans les trois prochains mois sur la page d'accueil et peut les filtrer par région, catégorie.</li>
             <li class="scenario-main-step">L'utilisateur peut cliquer sur un projet pour accéder à une page de détails où il pourra voir les dates de début et de fin, le contenu détaillé des tâches et la planification.</li>
             <li class="scenario-main-step">Après avoir consulté les détails, il peut revenir à la page d'accueil.</li>
         </ol>
@@ -1318,10 +1318,10 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
 <div class="scenario" id="cu-1">
     <div class="scenario-meta">
         <h4 class="cu-name">
-            <strong>CU:</strong> Signaler un problème à la ville
+            <strong>CU:</strong> Consulter les entraves routières causées par les travaux en cours.
         </h4>
         <p class="cu-goal">
-            <strong>Objectif:</strong> Les résidents communiquent directement les problèmes qu'ils constatent au gouvernement.
+            <strong>Objectif:</strong> Un résident peut consulter l'impact (entrave) sur le réseau routier causé par les travaux en cours. 
         </p>
         
         <hr>
@@ -1343,34 +1343,34 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
         <div class="cu-part">
             <h5 class="cu-part-title">Postconditions</h5>
             <ul class="bare-list cu-conditions">
-                <li class="dash">Téléchargement réussi</li>
+                <li class="dash">Aucun</li>
             </ul>
         </div>
 
         <div class="cu-part cu-part--notes">
             <h5 class="cu-part-title">Notes</h5>
-            <p class="cu-notes">Nous supposons que les résidents peuvent dialoguer directement avec les départements gouvernementaux via l'application</p>
+            <p class="cu-notes"></p>
         </div>
     </div>
     <div class="scenario-main">
         <h5 class="scenario-main-title">Scénario principal</h5>
         <ol class="scenario-main-steps">
-            <li class="scenario-main-step">Le résident clique sur n'importe quel projet de travaux sur la page d'accueil et trouve le bouton de dialogue</li>
-            <li class="scenario-main-step">Ensuite, il choisit l'une des options suivantes : participer à la planification, soumettre une demande, ou signaler un problème à la ville</li>
+            <li class="scenario-main-step">Le résident choisit de rechercher par travail spécifique ou par rue.</li>
+            <li class="scenario-main-step">Ensuite, L'utilisateur saisit un mot-clé ou le nom d'un tronçon pour sélectionner le travail qu'il souhaite consulter.</li>
            
-            <li class="scenario-main-step">Dans le sction signaler un problèmd,Les résidents remplissent les sections spécifiques de la zone et décrivent clairement le problème.</li>
-            <li class="scenario-main-step">Les résidents téléchargent et sauvegardent.</li>
+            <li class="scenario-main-step">Après avoir cliqué sur le bouton, la page affiche les informations détaillées sur les entraves.</li>
+            
          <li class="scenario-main-step">Le résident retourne à la page précédente </li>
         </ol>
 
         <div class="scenario-alt">
             <h5 class="scenario-alt-title">Scénarios alternatifs</h5>
             <ol class="bare-list scenario-alt-steps">
-                <li class="scenario-alt-step" value="3">
+                <li class="scenario-alt-step" value="2">
                     Informations incorrectes
                     <ol class="bare-list">
-                        <li value="3">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
-                        <li value="3">Retour à la page de saisie</li>
+                        <li value="2">Le système affiche un message indiquant que les informations ne sont pas correctes, l'utilisateur doit les modifier</li>
+                        <li value="2">Retour à la page de saisie</li>
                     </ol>
                 </li>
             </ol>
