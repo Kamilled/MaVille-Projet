@@ -664,6 +664,15 @@
                         </ul>
                     </li>
                     <li class="nav-item">
+                        <h3 class="nav-item-title"><a class="nav-item-title__link" href="#design">Conception</a></h3>
+                        <ul class="bare-list nav-item-details">
+                            <li class="dash">Architecture</li>
+                            <li class="dash">Diagramme de classes</li>
+                            <li class="dash">Diagramme de séquence</li>
+                            <li class="dash">Justification des choix de design</li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
                         <h3 class="nav-item-title"><a class="nav-item-title__link" href="#prototype">Prototype</a> </h3>
                     </li>
                 </ul>
@@ -1688,6 +1697,39 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
                         Pour l'application "MaVille", il est essentiel de s'intégrer aux systèmes existants, tels que "Info entraves et travaux" ainsi que l'application "Waze", qui fournit des informations sur la circulation et les fermetures de routes à Montréal. En intégrant ces systèmes, "MaVille" pourra offrir des données précises et à jour sur les impacts des travaux pour les résidents.Pour faciliter cette intégration, nous mettrons en place une API RESTful simple qui permettra d'échanger les informations entre notre application et ces systèmes. Nous utiliserons des formats de données standards comme JSON pour assurer une communication facile et sans obstacle. Il est important de prendre en compte la cohérence des données entre les systèmes, en mettant en place des mécanismes pour gérer les erreurs et garantir des échanges fiables. Nous veillerons aussi à la sécurité des échanges, en utilisant des clés API pour contrôler l'accès. Ces choix permettent de maintenir une intégration fluide tout en respectant les besoins de simplicité, de cohérence, et de sécurité.
                     </p>
                 </div>
+            </section>
+
+            <section class="main-section">
+                <h2 id="design" class="section-title">Conception</h2>
+
+                <h3 id="architecture" class="subsection-title">Architecture</h3>
+                <p>
+                    L’architecture de MaVille est pensée pour être modulaire et évolutive, offrant aux résidents de Montréal un moyen efficace et fiable de s’informer sur les travaux publics et privés. Organisée en couches, elle intègre une API REST qui rend l’ensemble à la fois flexible et facile à maintenir.
+                </p>
+
+                <h4>Couche de Présentation</h4>
+                <p>
+                    La première couche, celle de présentation, correspond à l’interface de commande par laquelle les résidents et intervenants interagissent avec l’application. Pensée pour être simple et intuitive, elle répond aux besoins de simplicité et d’accessibilité, ce qui aide à limiter le risque de non-adoption. Les menus y sont clairs et bien organisés, permettant aux utilisateurs de consulter les travaux, de gérer leurs notifications, ou de personnaliser leurs préférences sans avoir à naviguer dans des sous-menus complexes.
+                </p>
+
+                <h4>Couche de Logique Métier</h4>
+                <p>
+                    La logique métier regroupe toutes les règles de gestion des données et des notifications, ainsi que la coordination des préférences utilisateurs. Cette couche garantit que l'application reste réactive même lors de pics d'utilisation, en réduisant au maximum les requêtes superflues et en optimisant le traitement des demandes fréquentes. Ce design garantit une fiabilité accrue, tout en aidant l’application à répondre efficacement aux besoins de performance, même en cas d’affluence importante.
+                </p>
+
+                <h4>Couche d'Accès aux Données avec REST</h4>
+                <p>
+                    Pour l’accès aux données, MaVille s’appuie sur une API REST qui facilite les échanges avec Firebase, la base de données choisie pour sa sécurité et sa capacité de mise à l’échelle. Grâce à cette API, les différentes ressources de MaVille (travaux, notifications, préférences utilisateurs) sont accessibles via des points de terminaison clairs pour lire, créer, mettre à jour ou supprimer des données en toute sécurité. Ce système garantit une gestion efficace et flexible des données, contribuant aux besoins de scalabilité, de sécurité des données, et d’intégrité.
+                </p>
+
+                <h4>Intégration avec les Services Externes</h4>
+                <p>
+                    Pour fournir des informations toujours à jour, MaVille s’intègre à l’API de la Ville de Montréal, "Info entraves et travaux". Cette intégration permet aux utilisateurs de disposer d'informations en temps réel sur les entraves et les travaux autour d’eux. En cas de problème avec les mises à jour automatiques, une option manuelle permet aux administrateurs de contrôler l’importation des données essentielles, minimisant ainsi le risque de dépendance aux données externes et garantissant la fiabilité de l’application.
+                </p>
+
+                <p>
+                    En somme, cette architecture en couches, soutenue par une API REST, assure une organisation claire et une expérience utilisateur fluide. Chaque composant joue un rôle essentiel dans la sécurité, la performance, et la modularité de l'application, permettant ainsi à MaVille de répondre aux besoins des citoyens avec une grande flexibilité.
+                </p>
             </section>
 
             <section class="main-section">
