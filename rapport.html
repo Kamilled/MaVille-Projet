@@ -1707,22 +1707,22 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
                     L’architecture de MaVille est pensée pour être modulaire et évolutive, offrant aux résidents de Montréal un moyen efficace et fiable de s’informer sur les travaux publics et privés. Organisée en couches, elle intègre une API REST qui rend l’ensemble à la fois flexible et facile à maintenir.
                 </p>
 
-                <h4>Couche de Présentation</h4>
+
                 <p>
                     La première couche, celle de présentation, correspond à l’interface de commande par laquelle les résidents et intervenants interagissent avec l’application. Pensée pour être simple et intuitive, elle répond aux besoins de simplicité et d’accessibilité, ce qui aide à limiter le risque de non-adoption. Les menus y sont clairs et bien organisés, permettant aux utilisateurs de consulter les travaux, de gérer leurs notifications, ou de personnaliser leurs préférences sans avoir à naviguer dans des sous-menus complexes.
                 </p>
 
-                <h4>Couche de Logique Métier</h4>
+
                 <p>
                     La logique métier regroupe toutes les règles de gestion des données et des notifications, ainsi que la coordination des préférences utilisateurs. Cette couche garantit que l'application reste réactive même lors de pics d'utilisation, en réduisant au maximum les requêtes superflues et en optimisant le traitement des demandes fréquentes. Ce design garantit une fiabilité accrue, tout en aidant l’application à répondre efficacement aux besoins de performance, même en cas d’affluence importante.
                 </p>
 
-                <h4>Couche d'Accès aux Données avec REST</h4>
+
                 <p>
                     Pour l’accès aux données, MaVille s’appuie sur une API REST qui facilite les échanges avec Firebase, la base de données choisie pour sa sécurité et sa capacité de mise à l’échelle. Grâce à cette API, les différentes ressources de MaVille (travaux, notifications, préférences utilisateurs) sont accessibles via des points de terminaison clairs pour lire, créer, mettre à jour ou supprimer des données en toute sécurité. Ce système garantit une gestion efficace et flexible des données, contribuant aux besoins de scalabilité, de sécurité des données, et d’intégrité.
                 </p>
 
-                <h4>Intégration avec les Services Externes</h4>
+
                 <p>
                     Pour fournir des informations toujours à jour, MaVille s’intègre à l’API de la Ville de Montréal, "Info entraves et travaux". Cette intégration permet aux utilisateurs de disposer d'informations en temps réel sur les entraves et les travaux autour d’eux. En cas de problème avec les mises à jour automatiques, une option manuelle permet aux administrateurs de contrôler l’importation des données essentielles, minimisant ainsi le risque de dépendance aux données externes et garantissant la fiabilité de l’application.
                 </p>
@@ -1734,6 +1734,19 @@ Adresse résidentiel: Permets de l'associer à un quartier de Montréal</p>
                     <img src="Diagrammes/modèle%20architecture.png" alt="Diagramme de l'architecture" style="width: 80%; max-width: 1000px;">
                     <p style="font-size: 0.9em; color: #555;">Diagramme illustrant l'architecture du système MaVille</p>
                 </div>
+
+                <h3 id="design-justification" class="subsection-title">Justification des choix du design</h3>
+                <p>
+                L'architecture de MaVille a été pensée pour être simple, modulaire et facile à maintenir. En utilisant une structure en couches, chaque partie du système à un rôle bien défini :l'interface de commande gère les interactions avec les utilisateurs, la logique métier gère les règles du système et effectue les traitements nécessaires sur les données avant leur utilisation, et l'API REST se charge des échanges avec la base de données Firebase et les services externes soit Info entraves et travaux. Cette séparation des tâches rend le système plus clair et évite que les composants soient trop dépendants les uns des autres.
+                </p>
+
+                <p>
+                L'API REST joue un rôle important dans le système en agissant comme un intermédiaire entre la logique métier, la base de données et les services externes. Grâce à elle, la logique métier peut se concentrer sur son rôle principal sans se préoccuper des détails techniques, comme la manière dont les données sont stockées ou récupérées. En plus, cela renforce la sécurité en empêchant l'accès direct aux informations sensibles, comme les données des utilisateurs ou des projets, tout en assurant une gestion organisée et contrôlée de ces échanges.
+                </p>
+
+                <p>
+                En choisissant ce design, l'objectif était de rendre l'application flexible pour qu'elle puisse évoluer facilement. Par exemple, si on veut ajouter de nouvelles fonctionnalités ou intégrer d'autres services externes, on peut le faire sans modifier tout le système. En regroupant les fonctionnalités similaires dans des composants spécifiques, on assure aussi que chaque partie du système reste simple à comprendre et à mettre à jour.
+                </p>
             </section>
 
             <section class="main-section">
