@@ -336,46 +336,42 @@ public class Main {
     // Consulter les travaux en cours ou à venir
     private static void consulterTravauxEnCours() {
         // Consulter les travaux en cours ou à venir
-
+        System.out.println("\nTravaux en cours ou à venir :");
         try {
-            String apiUrl = "https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=cc41b532-f12d-40fb-9f55-eb58c9a2b12b";
+            // URL de l'API REST locale
+            String apiUrl = "http://localhost:7000/requetes";
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            if (connection.getResponseCode()== 200){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Parse JSON et afficher les travaux
+                JSONArray travaux = new JSONArray(response.toString());
+                if (travaux.length() > 0) {
+                    for (int i=0; i<travaux.length(); i++) {
+                        JSONObject travail = travaux.getJSONObject(i);
+                        System.out.println("ID : " + travail.getInt("id"));
+                        System.out.println("Description : " + travail.getString("description"));
+                        System.out.println("Fermée : " + travail.getBoolean("estFermee"));
+                        System.out.println("------------------------");
+                    }
+                }else{
+                    System.out.println("Aucun travail trouvé.");
+                }
+            }else {
+                System.out.println("Erreur lors de la récupération des travaux : " + connection.getResponseCode());
             }
-            reader.close();
-
-            // 解析 JSON 响应
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            JSONObject result = jsonResponse.getJSONObject("result");
-            JSONArray records = result.getJSONArray("records");
-
-            System.out.println("\nListe des travaux en cours ou à venir :");
-            for (int i = 0; i < records.length(); i++) {
-                JSONObject record = records.getJSONObject(i);
-
-                String id = record.optString("id", "N/A");
-                String boroughId = record.optString("boroughid", "N/A");
-                String currentStatus = record.optString("currentstatus", "N/A");
-                String reasonCategory = record.optString("reason_category", "N/A");
-                String submitterCategory = record.optString("submittercategory", "N/A");
-                String organizationName = record.optString("organizationname", "N/A");
-
-                System.out.println("ID du travail: " + id +
-                        ", Arrondissement: " + boroughId +
-                        ", Statut actuel: " + currentStatus +
-                        ", Motif du travail: " + reasonCategory +
-                        ", Catégorie d'intervenant: " + submitterCategory +
-                        ", Nom de l'intervenant: " + organizationName);
-            }
+            connection.disconnect();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la consultation des travaux : " + e.getMessage());
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 
