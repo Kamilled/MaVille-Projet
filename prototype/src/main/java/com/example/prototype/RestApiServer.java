@@ -1,7 +1,12 @@
 package com.example.prototype;
 import io.javalin.Javalin;
-import io.javalin.http.Context;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,11 +48,39 @@ public class RestApiServer {
         });
         app.delete("/requetes/{id}", ctx -> {
             int id = Integer.parseInt(ctx.pathParam("id"));
-            boolean supprimé = requetes.removeIf(r -> r.getId() == id);
-            if (supprimé) {
+            boolean supprimer = requetes.removeIf(r -> r.getId() == id);
+            if (supprimer) {
                 ctx.status(204).result("Requête supprimée !");
             } else {
                 ctx.status(404).result("Requête non trouvée !");
+            }
+        });
+
+        app.get("/travaux-publics",ctx -> {
+            try{
+                String apiUrlMontreal = "https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=cc41b532-f12d-40fb-9f55-eb58c9a2b12b";
+                URL url = new URL(apiUrlMontreal);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                if (connection.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    // Extraction des travaux depuis l'API publique
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    JSONArray travauxMontreal = jsonResponse.getJSONObject("result").getJSONArray("records");
+                    // Renvoi des données au client via l'API locale
+                    ctx.json(travauxMontreal);
+                } else {
+                    ctx.status(500).result("Erreur lors de l'appel à l'API publique : " + connection.getResponseCode());
+                }
+            } catch (Exception e) {
+                ctx.status(500).result("Erreur interne : " + e.getMessage());
             }
         });
     }
