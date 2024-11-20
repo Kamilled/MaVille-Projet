@@ -88,7 +88,7 @@ public class Main {
         // Initialiser les données
         initialiserDonnees();
         // Démarrage du serveur REST
-        RestApiServer server = new RestApiServer();
+        RestApiServer server = new RestApiServer(requetes);
         server.start();
 
         int choixPrincipal;
