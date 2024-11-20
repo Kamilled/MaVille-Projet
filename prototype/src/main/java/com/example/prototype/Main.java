@@ -73,6 +73,9 @@ class RequeteDeTravail {
     public String toString() {
         return "ID: " + id + ", Description: " + description + ", Fermée: " + estFermee;
     }
+
+    public void setDescription(String nouvelleDescription) {
+    }
 }
 
 public class Main {
