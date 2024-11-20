@@ -274,9 +274,26 @@ public class Main {
     private static void creerRequeteTravail() {
         System.out.print("Entrez la description de la requête : ");
         String description = scanner.nextLine();
-        RequeteDeTravail nouvelleRequete = new RequeteDeTravail(description);
-        requetes.add(nouvelleRequete);
-        System.out.println("Requête de travail créée, ID : " + nouvelleRequete.getId());
+        try {
+            URL url = new URL("http://localhost:7000/requetes");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type","application/X-www-form-urlencoded");
+            connection.getOutputStream().write(("description=" + description).getBytes());
+
+            if (connection.getResponseCode()==201){
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String response = reader.readLine();
+                System.out.println("Requête créée avec succès : " +response);
+                reader.close();
+            } else {
+                System.out.println("Erreur lors de la création de la requête : " + connection.getResponseCode());
+            }
+            connection.disconnect();
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
     }
 
     // Voir toutes les requêtes de travail
