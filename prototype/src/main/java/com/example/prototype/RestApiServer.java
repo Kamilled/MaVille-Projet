@@ -6,15 +6,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RestApiServer {
+    private Javalin app;
     private static List<RequeteDeTravail> requetes = new ArrayList<>();
 
-    public static void main(String[] args) {
-        Javalin app = Javalin.create().start(7000);
+    public RestApiServer(){
+        app=Javalin.create();
         app.get("/", ctx -> ctx.result("Bienvenue sur l'API MaVille !"));
-        app.get("/requetes", RestApiServer::getToutesLesRequetes);
-        app.post("/requetes", RestApiServer::creerRequete);
-        app.put("/requetes/{id}", RestApiServer::mettreAJourRequete); // Correction ici
-        app.delete("/requetes/{id}", RestApiServer::supprimerRequete); // Correction ici
+        app.get("/requetes", ctx -> getToutesLesRequetes(ctx));
+        app.post("/requetes", ctx -> creerRequete(ctx));
+        app.put("/requetes/{id}", ctx -> mettreAJourRequete(ctx));
+        app.delete("/requetes/{id}", ctx -> supprimerRequete(ctx));
+    }
+    public void start(){
+        app.start(7000);
     }
 
     private static void getToutesLesRequetes(Context ctx) {
@@ -33,7 +37,7 @@ public class RestApiServer {
     }
 
     private static void mettreAJourRequete(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id")); // Correction : l'accès à {id} reste inchangé
+        int id = Integer.parseInt(ctx.pathParam("id"));
         RequeteDeTravail requete = requetes.stream()
                 .filter(r -> r.getId() == id)
                 .findFirst()
@@ -50,8 +54,12 @@ public class RestApiServer {
     }
 
     private static void supprimerRequete(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id")); // Correction : l'accès à {id} reste inchangé
-        requetes.removeIf(r -> r.getId() == id);
-        ctx.status(204).result("Requête supprimée !");
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        boolean supprime=requetes.removeIf(r -> r.getId()==id);
+        if (supprime) {
+            ctx.status(204).result("Requête supprimée !");
+        }else {
+            ctx.status(404).result("Requête non trouvée !");
+        }
     }
 }
