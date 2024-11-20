@@ -379,40 +379,41 @@ public class Main {
 
     // Consulter les entraves
     private static void consulterLesEntraves() {
+        System.out.println("\nEntraves routières causées par les travaux en cours :");
         try {
-            String apiUrl = "https://donnees.montreal.ca/api/3/action/datastore_search?resource_id=a2bc8014-488c-495d-941b-e7ae1999d1bd";
+            String apiUrl = "http://localhost:7000/entraves-publics";
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            if (connection.getResponseCode() == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                // Parse JSON et afficher les entraves
+                JSONArray entraves = new JSONArray(response.toString());
+                if (entraves.length() > 0) {
+                    for (int i = 0; i < entraves.length(); i++) {
+                        JSONObject entrave = entraves.getJSONObject(i);
+                        System.out.println("ID Travail : " + entrave.optString("id_request", "N/A"));
+                        System.out.println("Rue : " + entrave.optString("shortname", "N/A"));
+                        System.out.println("Impact : " + entrave.optString("streetimpacttype", "N/A"));
+                        System.out.println("------------------------");
+                    }
+                } else {
+                    System.out.println("Aucune entrave trouvée.");
+                }
+            } else {
+                System.out.println("Erreur lors de la récupération des entraves : " + connection.getResponseCode());
             }
-            reader.close();
-
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            JSONObject result = jsonResponse.getJSONObject("result");
-            JSONArray records = result.getJSONArray("records");
-
-            System.out.println("\nListe des entraves :");
-            for (int i = 0; i < records.length(); i++) {
-                JSONObject record = records.getJSONObject(i);
-
-                String idRequest = record.optString("id_request", "N/A");
-                String streetId = record.optString("streetid", "N/A");
-                String shortName = record.optString("shortname", "N/A");
-                String streetImpactType = record.optString("streetimpacttype", "N/A");
-
-                System.out.println("ID du Travail: " + idRequest +
-                        ", ID Rue: " + streetId +
-                        ", Nom Rue: " + shortName +
-                        ", Impact Rue: " + streetImpactType);
-            }
+            connection.disconnect();
         } catch (Exception e) {
-            System.out.println("Erreur lors de la consultation des entraves : " + e.getMessage());
+            System.out.println("Erreur : " + e.getMessage());
         }
     }
 }
