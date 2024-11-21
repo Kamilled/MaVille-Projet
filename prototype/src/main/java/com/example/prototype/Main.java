@@ -84,6 +84,7 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
     private static Utilisateur utilisateurCourant;
 
+
     public static void main(String[] args) {
         // Initialiser les données
         initialiserDonnees();
@@ -174,14 +175,14 @@ public class Main {
             System.out.println("4. Retour au menu principal");
             System.out.print("Choisissez une option : ");
             choix = scanner.nextInt();
-            scanner.nextLine();  // Vider le tampon d'entrée
+            scanner.nextLine();
 
             switch (choix) {
                 case 1:
                     creerRequeteTravail();
                     break;
                 case 2:
-                    consulterEtatTravaux();  // Nouvelle méthode pour gérer les sous-options
+                    consulterEtatTravaux();
                     break;
                 case 3:
                     voirRequetesTravail();
@@ -192,8 +193,9 @@ public class Main {
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choix != 4);
+        } while (choix != 5);
     }
+
 
     private static void consulterEtatTravaux() {
         int choix;
@@ -231,17 +233,21 @@ public class Main {
             System.out.println("2. Retour au menu principal");
             System.out.print("Choisissez une option : ");
             choix = scanner.nextInt();
-            scanner.nextLine();  // Vider le tampon d'entrée
+            scanner.nextLine();
 
-            if (choix == 1) {
-                gererRequetesIntervenant(); // Sous-menu pour gérer les requêtes
-            } else if (choix == 2) {
-                System.out.println("Retour au menu principal...");
-            } else {
-                System.out.println("Option invalide, veuillez réessayer.");
+            switch (choix) {
+                case 1:
+                    gererRequetesIntervenant();
+                    break;
+                case 2:
+                    System.out.println("Retour au menu principal...");
+                    break;
+                default:
+                    System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choix != 2);
+        } while (choix != 3);
     }
+
 
     private static void gererRequetesIntervenant() {
         int choix;
@@ -333,13 +339,27 @@ public class Main {
         }
     }
 
+
+
+
     // Consulter les travaux en cours ou à venir
     private static void consulterTravauxEnCours() {
         // Consulter les travaux en cours ou à venir
         System.out.println("\nTravaux en cours ou à venir :");
+        // Afficher les travaux internes
+        System.out.println("\nTravaux internes :");
+        for (RequeteDeTravail requete : requetes) {
+            System.out.println("ID : " + requete.getId());
+            System.out.println("Description : " + requete.getDescription());
+            System.out.println("Fermée : " + requete.estFermee());
+            System.out.println("------------------------");
+        }
+
+        // Ajouter les travaux publics
+        System.out.println("\nTravaux publics :");
         try {
-            // URL de l'API REST locale
-            String apiUrl = "http://localhost:7000/requetes";
+
+            String apiUrl = "http://localhost:7000/travaux-publics";
             URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -354,20 +374,22 @@ public class Main {
                 reader.close();
 
                 // Parse JSON et afficher les travaux
-                JSONArray travaux = new JSONArray(response.toString());
-                if (travaux.length() > 0) {
-                    for (int i=0; i<travaux.length(); i++) {
-                        JSONObject travail = travaux.getJSONObject(i);
-                        System.out.println("ID : " + travail.getInt("id"));
-                        System.out.println("Description : " + travail.getString("description"));
-                        System.out.println("Fermée : " + travail.getBoolean("estFermee"));
+                JSONArray travauxPublics = new JSONArray(response.toString());
+                if (travauxPublics.length() > 0) {
+                    for (int i = 0; i < travauxPublics.length(); i++) {
+                        JSONObject travail = travauxPublics.getJSONObject(i);
+                        System.out.println("ID : " + travail.optString("id", "N/A"));
+                        System.out.println("Arrondissement : " + travail.optString("boroughid", "N/A"));
+                        System.out.println("Statut : " + travail.optString("currentstatus", "N/A"));
+                        System.out.println("Motif : " + travail.optString("reason_category", "N/A"));
+                        System.out.println("Intervenant : " + travail.optString("organizationname", "N/A"));
                         System.out.println("------------------------");
                     }
-                }else{
-                    System.out.println("Aucun travail trouvé.");
+                } else {
+                    System.out.println("Aucun travail public trouvé.");
                 }
-            }else {
-                System.out.println("Erreur lors de la récupération des travaux : " + connection.getResponseCode());
+            } else {
+                System.out.println("Erreur lors de la récupération des travaux publics : " + connection.getResponseCode());
             }
             connection.disconnect();
         } catch (Exception e) {
@@ -395,7 +417,7 @@ public class Main {
                 }
                 reader.close();
 
-                // Parse JSON et afficher les entraves
+
                 JSONArray entraves = new JSONArray(response.toString());
                 if (entraves.length() > 0) {
                     for (int i = 0; i < entraves.length(); i++) {
@@ -416,4 +438,8 @@ public class Main {
             System.out.println("Erreur : " + e.getMessage());
         }
     }
+
+
+
+
 }
