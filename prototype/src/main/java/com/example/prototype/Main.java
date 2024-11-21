@@ -46,11 +46,27 @@ class RequeteDeTravail {
     private int id;
     private String description;
     private boolean estFermee;
+    private List<Utilisateur> candidatures;
+    private Utilisateur candidatSelectionne;
+    private String message;
+    private boolean confirmationIntervenant;
 
     public RequeteDeTravail(String description) {
         this.id = compteurId++;
         this.description = description;
         this.estFermee = false;
+        this.candidatures=new ArrayList<>();
+        this.candidatSelectionne=null;
+        this.message="";
+        this.confirmationIntervenant=false;
+    }
+
+    public boolean isConfirmationIntervenant() {
+        return confirmationIntervenant;
+    }
+
+    public void confirmerIntervenant() {
+        this.confirmationIntervenant = true;
     }
 
     public int getId() {
@@ -69,12 +85,45 @@ class RequeteDeTravail {
         this.estFermee = true;
     }
 
+    public List<Utilisateur> getCandidatures() {
+        return candidatures;
+    }
+
+    public String getMessage(){
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message=message;
+    }
+
+    public void ajouterCandidature(Utilisateur intervenant) {
+        if (!candidatures.contains(intervenant)){
+            candidatures.add(intervenant);
+        }
+    }
+
+    public void retirerCandidature(Utilisateur intervenant) {
+        candidatures.remove(intervenant);
+    }
+
+    public Utilisateur getCandidatSelectionne() {
+        return candidatSelectionne;
+    }
+
+    public void setCandidatSelectionne(Utilisateur candidat) {
+        this.candidatSelectionne=candidat;
+    }
+
+
+
     @Override
     public String toString() {
         return "ID: " + id + ", Description: " + description + ", Fermée: " + estFermee;
     }
 
     public void setDescription(String nouvelleDescription) {
+        this.description = nouvelleDescription;
     }
 }
 
@@ -86,27 +135,31 @@ public class Main {
 
 
     public static void main(String[] args) {
-        // Initialiser les données
         initialiserDonnees();
-        // Démarrage du serveur REST
         RestApiServer server = new RestApiServer(requetes);
         server.start();
 
         int choixPrincipal;
         do {
-            // Afficher le menu principal
             choixPrincipal = menuPrincipal();
-            if (choixPrincipal == 1 || choixPrincipal == 2) {
-                if (connexion(choixPrincipal)) {
-                    // Afficher le menu selon le rôle
-                    if ("resident".equals(utilisateurCourant.getRole())) {
-                        menuResident();
-                    } else if ("intervenant".equals(utilisateurCourant.getRole())) {
-                        menuIntervenant();
+            switch (choixPrincipal) {
+                case 1:
+                case 2:
+                    if (connexion(choixPrincipal)){
+                        if ("resident".equals(utilisateurCourant.getRole())){
+                             menuResident();
+                        } else if ("intervenant".equals(utilisateurCourant.getRole())) {
+                            gererRequetesIntervenant();
+                        }
+                    }else {
+                        System.out.println("Échec de la connexion !");
                     }
-                } else {
-                    System.out.println("Échec de la connexion !");
-                }
+                    break;
+                case 3:
+                    System.out.println("Système terminé.");
+                    break;
+                default:
+                    System.out.println("Option invalide, veuillez réessayer.");
             }
         } while (choixPrincipal != 3);
 
@@ -138,7 +191,7 @@ public class Main {
         requetes.add(new RequeteDeTravail("Nettoyer le parc"));
     }
 
-    // Fonction de connexion avec choix de rôle
+
     private static boolean connexion(int choixPrincipal) {
         String role = choixPrincipal == 1 ? "resident" : "intervenant";
         scanner.nextLine(); // Vider le tampon d'entrée
@@ -164,7 +217,7 @@ public class Main {
         return false;
     }
 
-    // Menu pour le résident
+
     private static void menuResident() {
         int choix;
         do {
@@ -172,7 +225,8 @@ public class Main {
             System.out.println("1. Soumettre une requête de travail");
             System.out.println("2. Consulter l'état des travaux");
             System.out.println("3. Voir mes requêtes");
-            System.out.println("4. Retour au menu principal");
+            System.out.println("4. Choisir une candidature et fermer une requête");
+            System.out.println("5. Retour au menu principal");
             System.out.print("Choisissez une option : ");
             choix = scanner.nextInt();
             scanner.nextLine();
@@ -188,12 +242,78 @@ public class Main {
                     voirRequetesTravail();
                     break;
                 case 4:
-                    System.out.println("Retour au menu principal...");
+                    choisirCandidatureEtFermerRequete();
+                    break;
+                case 5:
+                    System.out.println("Retour au menu principal ...");
                     break;
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
         } while (choix != 5);
+    }
+
+    private static void choisirCandidatureEtFermerRequete() {
+        List<RequeteDeTravail> requetesAvecCandidatures = requetes.stream()
+                .filter(r -> !r.estFermee() && !r.getCandidatures().isEmpty())
+                .toList();
+
+        if (requetesAvecCandidatures.isEmpty()){
+            System.out.println("Aucune requête avec des candidatures disponibles");
+            return;
+        }
+
+        System.out.println("Requêtes avec des candidatures : ");
+        for (RequeteDeTravail requete : requetesAvecCandidatures) {
+            System.out.println("ID: " + requete.getId() + " , Description: " + requete.getDescription());
+            System.out.println("Candidatures :");
+            for (Utilisateur intervenant : requete.getCandidatures()) {
+                System.out.println(" - " + intervenant.getEmail());
+            }
+            System.out.println("------------------------------");
+        }
+
+        System.out.print("Entrez l'ID de la requête que vous souhaitez fermer : ");
+        int idRequete = scanner.nextInt();
+        scanner.nextLine();
+
+        RequeteDeTravail requete = requetes.stream()
+                .filter(r -> r.getId() == idRequete && !r.estFermee() && !r.getCandidatures().isEmpty())
+                .findFirst()
+                .orElse(null);
+
+        if (requete !=null) {
+            System.out.println("Candidatures disponibles :");
+            List<Utilisateur> candidatures = requete.getCandidatures();
+            for (int i = 0; i < candidatures.size(); i++) {
+                System.out.println((i + 1) + ". " + candidatures.get(i).getEmail());
+            }
+            System.out.print("Choisissez le numéro de la candidature à sélectionner : ");
+            int choixCandidature = scanner.nextInt();
+            scanner.nextLine();
+
+            if (choixCandidature < 1 || choixCandidature > candidatures.size()) {
+                System.out.println("Choix invalide.");
+                return;
+            }
+
+            Utilisateur candidat = candidatures.get(choixCandidature - 1);
+            System.out.print("Voulez-vous ajouter un message ? (oui/non) : ");
+            String reponse = scanner.nextLine().trim().toLowerCase();
+            if (reponse.equals("oui") || reponse.equals("o")) {
+                System.out.print("Entrez votre message : ");
+                String message = scanner.nextLine().trim();
+                requete.setMessage(message);
+            }
+            requete.setCandidatSelectionne(candidat);
+            requete.fermer();
+            System.out.println("La requête a été fermée avec le candidat : " + candidat.getEmail());
+            if (!requete.getMessage().isEmpty()) {
+                System.out.println("Message : " + requete.getMessage());
+            }
+        } else {
+            System.out.println("Requête non trouvée ou sans candidatures disponibles.");
+        }
     }
 
 
@@ -224,28 +344,70 @@ public class Main {
         } while (choix != 3);
     }
 
-    // Menu pour l'intervenant
-    private static void menuIntervenant() {
-        int choix;
-        do {
-            System.out.println("\nMenu Intervenant :");
-            System.out.println("1. Voir et gérer les requêtes");
-            System.out.println("2. Retour au menu principal");
-            System.out.print("Choisissez une option : ");
-            choix = scanner.nextInt();
-            scanner.nextLine();
 
-            switch (choix) {
-                case 1:
-                    gererRequetesIntervenant();
-                    break;
-                case 2:
-                    System.out.println("Retour au menu principal...");
-                    break;
-                default:
-                    System.out.println("Option invalide, veuillez réessayer.");
-            }
-        } while (choix != 3);
+    private static void soumettreCandidature() {
+        voirRequetesTravail();
+        System.out.print("Entrez l'ID de la requête à laquelle vous voulez soumettre votre candidature: ");
+        int idRequete=scanner.nextInt();
+        scanner.nextLine();
+
+        RequeteDeTravail requete = requetes.stream()
+                .filter(r ->r.getId() == idRequete && !r.estFermee())
+                .findFirst()
+                .orElse(null);
+        if (requete != null) {
+            requete.ajouterCandidature(utilisateurCourant);
+            System.out.println("Candidature soumise avec succès.");
+        } else {
+            System.out.println("Requête non trouvée ou déjà fermée.");
+        }
+    }
+
+    private static void retirerCandidature() {
+        List<RequeteDeTravail> canditatures = requetes.stream()
+                .filter(r -> r.getCandidatures().contains(utilisateurCourant) && !r.estFermee())
+                .toList();
+
+        if (canditatures.isEmpty()) {
+            System.out.println("Vous n'avez aucune candidature active");
+            return;
+        }
+
+        System.out.println("Vos candidatures actives :");
+        for (RequeteDeTravail requete : canditatures) {
+            System.out.println("ID: " + requete.getId() + "Description: " + requete.getDescription());
+        }
+
+        System.out.print("Entrez l'ID de la requête dont vous voulez retirez votre candidature : ");
+        int idRequete = scanner.nextInt();
+        scanner.nextLine();
+
+        RequeteDeTravail requete = requetes.stream()
+                .filter(r -> r.getId() == idRequete && r.getCandidatures().contains(utilisateurCourant))
+                .findFirst()
+                .orElse(null);
+
+        if (requete != null) {
+            requete.retirerCandidature(utilisateurCourant);
+            System.out.println("Candidature retirée avec succès.");
+        } else {
+            System.out.println("Requête non trouvée ou candidature inexistante.");
+        }
+    }
+    private static void voirCandidaturesIntervenant(){
+        System.out.println("\n--- Vos Candidatures Actives ---");
+        List<RequeteDeTravail> candidatures = requetes.stream()
+                .filter(r -> r.getCandidatures().contains(utilisateurCourant) && !r.estFermee())
+                .toList();
+
+        if (candidatures.isEmpty()) {
+            System.out.println("Vous n'avez aucune candidature active.");
+            return;
+        }
+
+        for (RequeteDeTravail requete : candidatures) {
+            System.out.println("ID: " + requete.getId() + ", Description: " + requete.getDescription());
+        }
     }
 
 
@@ -253,30 +415,39 @@ public class Main {
         int choix;
         do {
             System.out.println("\nGérer les requêtes :");
-            System.out.println("1. Voir toutes les requêtes");
-            System.out.println("2. Choisir une requête à traiter");
-            System.out.println("3. Retour au menu Intervenant");
+            System.out.println("1. Soumettre une candidature à une requête");
+            System.out.println("2. Retirer une candidature");
+            System.out.println("3. Voir mes candidatures actives");
+            System.out.println("4. Confirmer une candidature");
+            System.out.println("5. Retour au menu principal");
             System.out.print("Choisissez une option : ");
-            choix = scanner.nextInt();
+            choix = lireEntier();
             scanner.nextLine();
 
             switch (choix) {
                 case 1:
-                    voirRequetesTravail();
+                    soumettreCandidature();
                     break;
                 case 2:
-                    choisirRequeteTravail();
+                    retirerCandidature();
                     break;
                 case 3:
-                    System.out.println("Retour au menu Intervenant...");
+                    voirCandidaturesIntervenant();
+                    break;
+                case 4:
+                    confirmerCandidature();
+                    break;
+                case 5:
+                    System.out.println("Retour au menu principal ...");
                     break;
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choix != 3);
+        } while (choix != 5);
     }
 
-    // Créer une nouvelle requête de travail
+
+
     private static void creerRequeteTravail() {
         System.out.print("Entrez la description de la requête : ");
         String description = scanner.nextLine();
@@ -302,7 +473,6 @@ public class Main {
         }
     }
 
-    // Voir toutes les requêtes de travail
     private static void voirRequetesTravail() {
         System.out.println("\nToutes les requêtes de travail :");
         for (RequeteDeTravail requete : requetes) {
@@ -310,39 +480,7 @@ public class Main {
         }
     }
 
-    // Choisir une requête de travail par un intervenant
-    private static void choisirRequeteTravail() {
-        System.out.print("Entrez l'ID de la requête à choisir : ");
-        int idRequete = scanner.nextInt();
-        scanner.nextLine();  // Vider le tampon d'entrée
 
-        RequeteDeTravail requeteChoisie = null;
-        for (RequeteDeTravail requete : requetes) {
-            if (requete.getId() == idRequete && !requete.estFermee()) {
-                requeteChoisie = requete;
-                break;
-            }
-        }
-
-        if (requeteChoisie != null) {
-            System.out.println("Vous avez choisi la requête : " + requeteChoisie);
-            System.out.print("Confirmez-vous votre choix ? (y/n) : ");
-            String confirmation = scanner.nextLine();
-            if ("y".equalsIgnoreCase(confirmation)) {
-                requeteChoisie.fermer();
-                System.out.println("La requête de travail a été terminée et fermée.");
-            } else {
-                System.out.println("La requête n'a pas été acceptée.");
-            }
-        } else {
-            System.out.println("ID de requête invalide ou requête déjà fermée.");
-        }
-    }
-
-
-
-
-    // Consulter les travaux en cours ou à venir
     private static void consulterTravauxEnCours() {
         // Consulter les travaux en cours ou à venir
         System.out.println("\nTravaux en cours ou à venir :");
@@ -439,7 +577,49 @@ public class Main {
         }
     }
 
+    private static void confirmerCandidature() {
+        System.out.println("\n--- Confirmer une Candidature ---");
+        List<RequeteDeTravail> requetesSelectionnees = requetes.stream()
+                .filter(r -> r.getCandidatSelectionne() != null &&
+                        r.getCandidatSelectionne().equals(utilisateurCourant) &&
+                        !r.isConfirmationIntervenant())
+                .toList();
+        if (requetesSelectionnees.isEmpty()) {
+            System.out.println("Aucune candidature à confirmer.");
+            return;
+        }
 
+        System.out.println("Candidatures à confirmer :");
+        for (RequeteDeTravail requete : requetesSelectionnees) {
+            System.out.println("ID: " + requete.getId() + ", Description: " + requete.getDescription());
+        }
 
+        System.out.print("Entrez l'ID de la requête dont vous voulez confirmer la candidature : ");
+        int idRequete = lireEntier();
+        scanner.nextLine();
+
+        RequeteDeTravail requete = requetesSelectionnees.stream()
+                .filter(r -> r.getId() == idRequete)
+                .findFirst()
+                .orElse(null);
+
+        if (requete != null) {
+            requete.confirmerIntervenant();
+            System.out.println("Candidature confirmée pour la requête : " + requete.getDescription());
+        } else {
+            System.out.println("Requête non trouvée ou candidature déjà confirmée.");
+        }
+
+    }
+    private static int lireEntier() {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (Exception e) {
+                System.out.println("Veuillez entrer un nombre valide.");
+                scanner.nextLine(); // Vide le buffer pour éviter une boucle infinie
+            }
+        }
+    }
 
 }
