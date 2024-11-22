@@ -86,6 +86,6 @@ public class RestApiServer {
     }
 
     public void start() {
-        app.start(7000);
+        app.start(8080);
     }
 }

@@ -12,4 +12,3 @@ module com.example.prototype {
     opens com.example.prototype to
             javafx.fxml;
 }
-

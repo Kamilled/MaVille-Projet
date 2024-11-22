@@ -31,7 +31,7 @@ public class Main {
                 case 2:
                     if (connexion(choixPrincipal)){
                         if ("resident".equals(utilisateurCourant.getRole())){
-                             menuResident();
+                            menuResident();
                         } else if ("intervenant".equals(utilisateurCourant.getRole())) {
                             gererRequetesIntervenant();
                         }
@@ -51,7 +51,7 @@ public class Main {
     }
 
     // Affiche le menu principal
-    private static int menuPrincipal() {
+    public static int menuPrincipal() {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1. Connexion en tant que résident");
         System.out.println("2. Connexion en tant qu'intervenant");
@@ -61,7 +61,7 @@ public class Main {
     }
 
     // Initialiser les données : 3 utilisateurs (résidents et intervenants) et 3 requêtes
-    private static void initialiserDonnees() {
+    public static void initialiserDonnees() {
         utilisateurs.add(new Utilisateur("1@hotmail.com", "123", "resident"));
         utilisateurs.add(new Utilisateur("2@hotmail.com", "123", "resident"));
         utilisateurs.add(new Utilisateur("3@hotmail.com", "123", "resident"));
