@@ -1,5 +1,6 @@
-package com.example.prototype;
+package com.example.test;
 
+import com.example.prototype.Main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,7 +1,8 @@
-package com.example.prototype;
+package com.example.test;
+import com.example.prototype.RequeteDeTravail;
+import com.example.prototype.Utilisateur;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.List;
 
 public class RequeteDeTravailTest {
