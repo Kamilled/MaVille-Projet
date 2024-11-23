@@ -32,5 +32,33 @@ public class RequeteDeTravailTest {
         RequeteDeTravail requete = new RequeteDeTravail("Réparer un trou dans la rue");
         requete.fermer();
         assertTrue(requete.estFermee(),"La requête devrait être marquée comme fermée.");
-    }
+    }@Test
+public void testAjouterCandidatureDejaExistante() {
+    RequeteDeTravail requete = new RequeteDeTravail("Réparer le toit");
+    Utilisateur intervenant = new Utilisateur("intervenant@exemple.com", "password", "intervenant");
+
+    requete.ajouterCandidature(intervenant);
+    requete.ajouterCandidature(intervenant);  // Tentative d'ajout d'un candidat déjà présent
+
+    List<Utilisateur> candidatures = requete.getCandidatures();
+    assertEquals(1, candidatures.size(), "L'intervenant ne devrait être ajouté qu'une seule fois.");
+}
+
+@Test
+public void testFermerRequeteDejaFermee() {
+    RequeteDeTravail requete = new RequeteDeTravail("Réparer la porte");
+    requete.fermer();  // Ferme la requête une première fois
+
+    requete.fermer();  // Essaye de fermer la requête de nouveau
+    assertTrue(requete.estFermee(), "La requête devrait rester fermée après avoir été fermée une première fois.");
+}
+
+@Test
+public void testRequeteSansCandidature() {
+    RequeteDeTravail requete = new RequeteDeTravail("Peindre le mur");
+
+    List<Utilisateur> candidatures = requete.getCandidatures();
+    assertTrue(candidatures.isEmpty(), "La requête ne devrait pas avoir de candidatures.");
+}
+
 }
