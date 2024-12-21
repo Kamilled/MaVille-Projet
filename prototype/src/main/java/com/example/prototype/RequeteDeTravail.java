@@ -7,16 +7,22 @@ import java.util.List;
 public class RequeteDeTravail {
     private static int compteurId = 1;
     private int id;
+    private String titre;
     private String description;
+    private TypeTravaux typeDeTravail;
+    private int dureeEsperee; // EN JOURS
     private boolean estFermee;
     private List<Utilisateur> candidatures;
     private Utilisateur candidatSelectionne;
     private String message;
     private boolean confirmationIntervenant;
 
-    public RequeteDeTravail(String description) {
+    public RequeteDeTravail(String titre, String description, TypeTravaux typeDeTravail, int dureeEsperee) {
         this.id = compteurId++;
+        this.titre = titre;
         this.description = description;
+        this.typeDeTravail = typeDeTravail;
+        this.dureeEsperee = dureeEsperee;
         this.estFermee = false;
         this.candidatures = new ArrayList<>();
         this.candidatSelectionne = null;
@@ -86,5 +92,29 @@ public class RequeteDeTravail {
 
     public void setDescription(String nouvelleDescription) {
         this.description = nouvelleDescription;
+    }
+
+    public void setDureeEsperee(int dureeEsperee) {
+        this.dureeEsperee = dureeEsperee;
+    }
+
+    public int getDureeEsperee() {
+        return dureeEsperee;
+    }
+
+    public void setTypeDeTravail(TypeTravaux typeDeTravail) {
+        this.typeDeTravail = typeDeTravail;
+    }
+
+    public TypeTravaux getTypeDeTravail() {
+        return typeDeTravail;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
     }
 }

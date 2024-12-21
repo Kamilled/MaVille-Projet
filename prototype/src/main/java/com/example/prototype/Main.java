@@ -8,12 +8,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Main {
     private static List<Utilisateur> utilisateurs = new ArrayList<>();
     private static List<RequeteDeTravail> requetes = new ArrayList<>();
+    private static List<Projet> projets = new ArrayList<>();
+    private static List<Entrave> entraves = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
     private static Utilisateur utilisateurCourant;
 
@@ -62,17 +65,69 @@ public class Main {
 
     // Initialiser les données : 3 utilisateurs (résidents et intervenants) et 3 requêtes
     public static void initialiserDonnees() {
-        utilisateurs.add(new Utilisateur("1@hotmail.com", "123", "resident"));
-        utilisateurs.add(new Utilisateur("2@hotmail.com", "123", "resident"));
-        utilisateurs.add(new Utilisateur("3@hotmail.com", "123", "resident"));
+        
+        Utilisateur resident1 = new Utilisateur("1@hotmail.com", "123", "resident");
+        Utilisateur resident2 = new Utilisateur("2@hotmail.com", "123", "resident");
+        Utilisateur resident3 = new Utilisateur("3@hotmail.com", "123", "resident");
+        Utilisateur resident4 = new Utilisateur("4@hotmail.com", "123", "resident");
+        Utilisateur resident5 = new Utilisateur("5@hotmail.com", "123", "resident");
 
-        utilisateurs.add(new Utilisateur("1@gmail.com", "123", "intervenant"));
-        utilisateurs.add(new Utilisateur("2@gmail.com", "123", "intervenant"));
-        utilisateurs.add(new Utilisateur("3@gmail.com", "123", "intervenant"));
+        Utilisateur intervenant1 = new Utilisateur("1@gmail.com", "123", "intervenant");
+        Utilisateur intervenant2 = new Utilisateur("2@gmail.com", "123", "intervenant");
+        Utilisateur intervenant3 = new Utilisateur("3@gmail.com", "123", "intervenant");
+        Utilisateur intervenant4 = new Utilisateur("4@gmail.com", "123", "intervenant");
+        Utilisateur intervenant5 = new Utilisateur("5@gmail.com", "123", "intervenant");
 
-        requetes.add(new RequeteDeTravail("Réparer le lampadaire"));
-        requetes.add(new RequeteDeTravail("Réparer un trou dans la rue"));
-        requetes.add(new RequeteDeTravail("Nettoyer le parc"));
+        RequeteDeTravail requete1 = new RequeteDeTravail("Réparer le lampadaire", "Le lampadaire est tombé dans l'intersection en Ducharme et Beauchamp.", TypeTravaux.TRAVAUXROUTIERS, 5);
+        RequeteDeTravail requete2 = new RequeteDeTravail("Réparer un trou dans la rue", "Trou de 1 mètre de diamètre.", TypeTravaux.TRAVAUXROUTIERS, 2);
+        RequeteDeTravail requete3 = new RequeteDeTravail("Nettoyer le parc", "De nombreuse tâches brunes sont sur les modules.", TypeTravaux.ENTRETIENURBAIN, 4);
+        RequeteDeTravail requete4 = new RequeteDeTravail("Installer un banc", "À l'intersection Ducharme et Beauchamp, plusieurs enfant attendent l'autobus scolaire et un banc leur permetteront de s'asseoir.", TypeTravaux.ENTRETIENPAYSAGER, 1);
+        RequeteDeTravail requete5 = new RequeteDeTravail("Peindre les clôtures", "Peinture de la clotûre d'une coure de 8 mètres sur 9 mètre.", TypeTravaux.ENTRETIENPAYSAGER, 4);
+        
+        Projet projet1 = new Projet("Projet 1", TypeTravaux.TRAVAUXROUTIERS, List.of("Quartier 1", "Quartier 2"), List.of("Rue 1", "Rue 2"), 20260101, 202600430, "Description du projet 1", "Horaire 1", "Intervenant 1");
+        Entrave entrave1 = new Entrave(projet1.getTitreProjet(), projet1.getRuesAffectees()); // Entrave associée au projet 1
+
+        Projet projet2 = new Projet("Projet 2", TypeTravaux.TRAVAUXGAZELECTRICITE, List.of("Quartier 3", "Quartier 4"), List.of("Rue 3", "Rue 4"), 20250101, 20251002, "Description du projet 2", "Horaire 2", "Intervenant 2");
+        Entrave entrave2 = new Entrave(projet2.getTitreProjet(), projet2.getRuesAffectees()); // Entrave associée au projet 2
+        
+        Projet projet3 = new Projet("Projet 3", TypeTravaux.CONSTRUCTIONRENOVATION, List.of("Quartier 5", "Quartier 6"), List.of("Rue 5", "Rue 6"), 20250201, 20250505, "Description du projet 3", "Horaire 3", "Intervenant 3");
+        Entrave entrave3 = new Entrave(projet3.getTitreProjet(), projet3.getRuesAffectees()); // Entrave associée au projet 3
+        
+        Projet projet4 = new Projet("Projet 4", TypeTravaux.ENTRETIENPAYSAGER, List.of("Quartier 7", "Quartier 8"), List.of("Rue 7", "Rue 8"), 20250708, 20260720, "Description du projet 4", "Horaire 4", "Intervenant 4");
+        Entrave entrave4 = new Entrave(projet4.getTitreProjet(), projet4.getRuesAffectees()); // Entrave associée au projet 4
+        
+        Projet projet5 = new Projet("Projet 5", TypeTravaux.TRAVAUXTRANSPORTPUBLIC, List.of("Quartier 9", "Quartier 10"), List.of("Rue 9", "Rue 10"), 20270214, 20300110, "Description du projet 5", "Horaire 5", "Intervenant 5");
+        Entrave entrave5 = new Entrave(projet5.getTitreProjet(), projet5.getRuesAffectees()); // Entrave associée au projet 5
+
+        utilisateurs.add(resident1);
+        utilisateurs.add(resident2);
+        utilisateurs.add(resident3);
+        utilisateurs.add(resident4);
+        utilisateurs.add(resident5);
+
+        utilisateurs.add(intervenant1);
+        utilisateurs.add(intervenant2);
+        utilisateurs.add(intervenant3);
+        utilisateurs.add(intervenant4);
+        utilisateurs.add(intervenant5);
+
+        requetes.add(requete1);
+        requetes.add(requete2);
+        requetes.add(requete3);
+        requetes.add(requete4);
+        requetes.add(requete5);
+
+        projets.add(projet1);
+        projets.add(projet2);
+        projets.add(projet3);
+        projets.add(projet4);
+        projets.add(projet5);
+
+        entraves.add(entrave1);
+        entraves.add(entrave2);
+        entraves.add(entrave3);
+        entraves.add(entrave4);
+        entraves.add(entrave5);
     }
 
 
