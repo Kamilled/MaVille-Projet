@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,9 +34,9 @@ public class Main {
                 case 1:
                 case 2:
                     if (connexion(choixPrincipal)){
-                        if ("resident".equals(utilisateurCourant.getRole())){
+                        if (utilisateurCourant instanceof Resident) {
                             menuResident();
-                        } else if ("intervenant".equals(utilisateurCourant.getRole())) {
+                        } else if (utilisateurCourant instanceof Intervenant) {
                             gererRequetesIntervenant();
                         }
                     }else {
@@ -43,6 +44,14 @@ public class Main {
                     }
                     break;
                 case 3:
+                    int inscription = inscription();
+                    if (inscription == 0) {
+                        System.out.println("Inscription échouée, veuillez réessayer.");
+                    } else if (inscription ==1 || inscription ==2) {
+                        if (inscription ==1) {menuResident();} else {gererRequetesIntervenant();}
+                    }
+                    break;
+                case 4:
                     System.out.println("Système terminé.");
                     break;
                 default:
@@ -58,7 +67,8 @@ public class Main {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1. Connexion en tant que résident");
         System.out.println("2. Connexion en tant qu'intervenant");
-        System.out.println("3. Quitter");
+        System.out.println("3. S'inscrire");
+        System.out.println("4. Quitter");
         System.out.print("Choisissez une option : ");
         return scanner.nextInt();
     }
@@ -66,17 +76,17 @@ public class Main {
     // Initialiser les données : 3 utilisateurs (résidents et intervenants) et 3 requêtes
     public static void initialiserDonnees() {
         
-        Utilisateur resident1 = new Utilisateur("1@hotmail.com", "123", "resident");
-        Utilisateur resident2 = new Utilisateur("2@hotmail.com", "123", "resident");
-        Utilisateur resident3 = new Utilisateur("3@hotmail.com", "123", "resident");
-        Utilisateur resident4 = new Utilisateur("4@hotmail.com", "123", "resident");
-        Utilisateur resident5 = new Utilisateur("5@hotmail.com", "123", "resident");
+        Utilisateur resident1 = new Resident("nom1","aaaa/mm/jj", "1@hotmail.com", "123", "adresse1");
+        Utilisateur resident2 = new Resident("nom2","aaaa/mm/jj",  "2@hotmail.com", "123", "adresse2");
+        Utilisateur resident3 = new Resident("nom3","aaaa/mm/jj",  "3@hotmail.com", "123", "adresse3");
+        Utilisateur resident4 = new Resident("nom4","aaaa/mm/jj",  "4@hotmail.com", "123", "adresse4");
+        Utilisateur resident5 = new Resident("nom5","aaaa/mm/jj",  "5@hotmail.com", "123", "adresse5");
 
-        Utilisateur intervenant1 = new Utilisateur("1@gmail.com", "123", "intervenant");
-        Utilisateur intervenant2 = new Utilisateur("2@gmail.com", "123", "intervenant");
-        Utilisateur intervenant3 = new Utilisateur("3@gmail.com", "123", "intervenant");
-        Utilisateur intervenant4 = new Utilisateur("4@gmail.com", "123", "intervenant");
-        Utilisateur intervenant5 = new Utilisateur("5@gmail.com", "123", "intervenant");
+        Utilisateur intervenant1 = new Intervenant("nom1", TypeIntervenant.ENTREPRISEPUBLIC, "1@gmail.com", "123", 00000000);
+        Utilisateur intervenant2 = new Intervenant("nom2", TypeIntervenant.ENTREPRENEURPRIVE, "2@gmail.com", "123", 11111111);
+        Utilisateur intervenant3 = new Intervenant("nom3", TypeIntervenant.ENTREPRISEPUBLIC, "3@gmail.com", "123", 22222222);
+        Utilisateur intervenant4 = new Intervenant("nom4", TypeIntervenant.PARTICULIER, "4@gmail.com", "123", 33333333);
+        Utilisateur intervenant5 = new Intervenant("nom5", TypeIntervenant.ENTREPRENEURPRIVE, "5@gmail.com", "123", 44444444);
 
         RequeteDeTravail requete1 = new RequeteDeTravail("Réparer le lampadaire", "Le lampadaire est tombé dans l'intersection en Ducharme et Beauchamp.", TypeTravaux.TRAVAUXROUTIERS, 5);
         RequeteDeTravail requete2 = new RequeteDeTravail("Réparer un trou dans la rue", "Trou de 1 mètre de diamètre.", TypeTravaux.TRAVAUXROUTIERS, 2);
@@ -141,9 +151,9 @@ public class Main {
 
         for (Utilisateur utilisateur : utilisateurs) {
             if (utilisateur.authentifier(email, motDePasse)) {
-                if (utilisateur.getRole().equals(role)) {
+                if (utilisateur instanceof  Resident || utilisateur instanceof Intervenant) {
                     utilisateurCourant = utilisateur;
-                    System.out.println("Bienvenue, " + utilisateur.getRole() + " !");
+                    System.out.println("Bienvenue, " + utilisateur.getNomComplet() + " !");
                     return true;
                 } else {
                     System.out.println("Erreur : Vous avez utilisé un compte de rôle incorrect. Essayez à nouveau.");
@@ -156,6 +166,111 @@ public class Main {
         return false;
     }
 
+    private static int inscription() {
+        scanner.nextLine(); 
+        int role = 0;
+
+        // Loop jusqu'à ce qu'un rôle valide soit entré
+        while (true) {
+            System.out.print("Êtes-vous un résident ou un intervenant ? ");
+            System.out.print("Entrez 1 pour résident ou 2 pour intervenant : ");
+            
+            try {
+                role = scanner.nextInt();
+                if (role == 1 || role == 2) {
+                    break; // Valide, sortir de la boucle
+                } else {
+                    System.out.println("Rôle invalide, veuillez entrer 1 pour résident ou 2 pour intervenant");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrée invalide, veuillez entrer un nombre  entre 1 ou 2");
+                scanner.next(); 
+            }
+        }
+
+        scanner.nextLine(); 
+
+        if (role == 1) {
+            System.out.print("Entrez votre nom complet: ");
+            String nomComplet = scanner.nextLine();
+
+            System.out.print("Entrez votre date de naissance (aaaa/mm/jj): ");
+            String dateNaissance = scanner.nextLine();
+
+            System.out.print("Entrez votre email : ");
+            String email = scanner.nextLine();
+
+            System.out.print("Entrez votre mot de passe : ");
+            String motDePasse = scanner.nextLine();
+
+            System.out.print("Entrez votre adresse résidentielle : ");
+            String adresse = scanner.nextLine();
+
+            Utilisateur nouvelUtilisateur = new Resident(nomComplet, dateNaissance, email, motDePasse, adresse);
+            utilisateurs.add(nouvelUtilisateur);
+
+            System.out.println("Utilisateur créé avec succès!");
+            return 1;
+           
+
+        
+        } else if (role == 2) {
+            System.out.print("Entrez votre nom complet: ");
+            String nomComplet = scanner.nextLine();
+            int typeIntervenantInt = 0;
+
+            // Loop jusqu'à ce qu'un type d'intervenant valide soit entré
+            while (true) {
+                System.out.print("Quel type d'intervenant êtes-vous ? (entrez 1 pour entreprise public, 2 pour entrepreneur privé ou 3 pour particulier) : ");
+                try {
+                    typeIntervenantInt = scanner.nextInt();
+                    if (typeIntervenantInt >= 1 && typeIntervenantInt <= 3) {
+                        break; // Valide, sortir de la boucle
+                    } else {
+                        System.out.println("Type d'intervenant invalide, veuillez entrer 1, 2 ou 3");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Entrée invalide, veuillez entrer un nombre (1, 2 ou 3).");
+                    scanner.next();
+                }
+            }
+
+            TypeIntervenant typeIntervenant = TypeIntervenant.values()[typeIntervenantInt - 1];
+            scanner.nextLine(); 
+
+            System.out.print("Entrez votre email : ");
+            String email = scanner.nextLine();
+
+            System.out.print("Entrez votre mot de passe : ");
+            String motDePasse = scanner.nextLine();
+
+            int identifiantVille = 0;
+
+            // Loop jusqu'à ce qu'un identifiant de ville valide soit entré
+            while (true) {
+                System.out.print("Entrez votre identifiant de la ville (code à 8 chiffres) : ");
+                try {
+                    identifiantVille = scanner.nextInt();
+                    if (String.valueOf(identifiantVille).length() == 8) {
+                        break; // Valide, sortir de la boucle
+                    } else {
+                        System.out.println("Identifiant de la ville invalide, veuillez entrer un code à 8 chiffres.");
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Entrée invalide. Veuillez entrer un nombre à 8 chiffres.");
+                    scanner.next(); 
+                }
+            }
+
+            Utilisateur nouvelUtilisateur = new Intervenant(nomComplet, typeIntervenant, email, motDePasse, identifiantVille);
+            utilisateurs.add(nouvelUtilisateur);
+
+            System.out.println("Utilisateur créé avec succès!");
+            return 2;
+            
+        }
+        return 0;  
+    }
 
     private static void menuResident() {
         int choix;

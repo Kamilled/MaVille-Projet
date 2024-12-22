@@ -1,14 +1,14 @@
 package com.example.prototype;
-import io.javalin.Javalin;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
+import io.javalin.Javalin;
 
 public class RestApiServer {
     private Javalin app;
@@ -21,12 +21,27 @@ public class RestApiServer {
         app.get("/", ctx -> ctx.result("Bienvenue sur l'API MaVille !"));
         app.get("/requetes", ctx -> ctx.json(requetes));
         app.post("/requetes", ctx -> {
+            String titre = ctx.formParam("titre");
+            if (titre == null || titre.isEmpty()) {
+                ctx.status(400).result("Titre requis !");
+                return;
+            }
             String description = ctx.formParam("description");
             if (description == null || description.isEmpty()) {
                 ctx.status(400).result("Description requise !");
                 return;
             }
-            RequeteDeTravail nouvelleRequete = new RequeteDeTravail(description);
+            TypeTravaux typeDeTravail = TypeTravaux.valueOf(ctx.formParam("typeDeTravail"));
+            if (typeDeTravail == null) {
+                ctx.status(400).result("Type de travail requis !");
+                return;
+            }
+            int dureeEsperee = Integer.parseInt(ctx.formParam("dureeEsperee"));
+            if (dureeEsperee <= 0) {
+                ctx.status(400).result("Durée espérée du projet requise !");
+                return;
+            }
+            RequeteDeTravail nouvelleRequete = new RequeteDeTravail(titre, description, typeDeTravail, dureeEsperee);
             requetes.add(nouvelleRequete);
             ctx.status(201).json(nouvelleRequete);
         });

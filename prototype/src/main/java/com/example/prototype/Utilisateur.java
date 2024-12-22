@@ -2,16 +2,25 @@ package com.example.prototype;
 
 
 public class Utilisateur {
+    private String nomComplet;
     private String email;
     private String motDePasse;
-    private String role;
 
-    public Utilisateur(String email, String motDePasse, String role) {
+
+    public Utilisateur(String nomComplet, String email, String motDePasse) {
+        this.nomComplet = nomComplet;
         this.email = email;
         this.motDePasse = motDePasse;
-        this.role = role;
     }
 
+
+    public String getNomComplet() {
+        return nomComplet;
+    }
+
+    public void setNomComplet(String nomComplet) {
+        this.nomComplet = nomComplet;
+    }
     public String getEmail() {
         return email;
     }
@@ -20,9 +29,6 @@ public class Utilisateur {
         return motDePasse;
     }
 
-    public String getRole() {
-        return role;
-    }
 
     public boolean authentifier(String email, String motDePasse) {
         return this.email.equals(email) && this.motDePasse.equals(motDePasse);
