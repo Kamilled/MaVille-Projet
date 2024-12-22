@@ -57,7 +57,7 @@ public class Main {
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choixPrincipal != 3);
+        } while (choixPrincipal != 4);
 
         System.out.println("Système terminé.");
     }
@@ -142,7 +142,6 @@ public class Main {
 
 
     private static boolean connexion(int choixPrincipal) {
-        String role = choixPrincipal == 1 ? "resident" : "intervenant";
         scanner.nextLine(); // Vider le tampon d'entrée
         System.out.print("Entrez votre email : ");
         String email = scanner.nextLine();
@@ -208,6 +207,9 @@ public class Main {
 
             Utilisateur nouvelUtilisateur = new Resident(nomComplet, dateNaissance, email, motDePasse, adresse);
             utilisateurs.add(nouvelUtilisateur);
+            utilisateurCourant = nouvelUtilisateur;
+            
+            
 
             System.out.println("Utilisateur créé avec succès!");
             return 1;
@@ -264,6 +266,7 @@ public class Main {
 
             Utilisateur nouvelUtilisateur = new Intervenant(nomComplet, typeIntervenant, email, motDePasse, identifiantVille);
             utilisateurs.add(nouvelUtilisateur);
+            utilisateurCourant = nouvelUtilisateur;
 
             System.out.println("Utilisateur créé avec succès!");
             return 2;
@@ -280,7 +283,8 @@ public class Main {
             System.out.println("2. Consulter l'état des travaux");
             System.out.println("3. Voir mes requêtes");
             System.out.println("4. Choisir une candidature et fermer une requête");
-            System.out.println("5. Retour au menu principal");
+            System.out.println("5. Modifier ma plage horaire");
+            System.out.println("6. Deconnexion");
             System.out.print("Choisissez une option : ");
             choix = scanner.nextInt();
             scanner.nextLine();
@@ -299,12 +303,79 @@ public class Main {
                     choisirCandidatureEtFermerRequete();
                     break;
                 case 5:
-                    System.out.println("Retour au menu principal ...");
+                    menuPlageHoraire();
+                    break;
+                case 6:
+                    System.out.println("Déconnexion...");
+                    menuPrincipal();
                     break;
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choix != 5);
+        } while (choix != 6);
+    }
+
+    public static void menuPlageHoraire() {
+        int choix;
+        Scanner scanner = new Scanner(System.in);
+
+
+        do {
+            System.out.println("\nMa plage horaire :");
+            System.out.println("1. Modifier plage horaire");
+            System.out.println("2. Consulter plage horaire");
+            System.out.println("3. Ajouter une plage horaire");
+            System.out.println("4. Retour");
+            System.out.print("Choisissez une option : ");
+            choix = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choix) {
+                case 1:
+                    if (((Resident) utilisateurCourant).isPlageHoraireEmpty()) {
+                        System.out.println("Aucune plage horaire définie.");
+                        menuPlageHoraire();
+                    } else {
+                        System.out.println("Quelle plage horaire voulez-vous modifier? (1 pour Lundi, 2 pour Mardi, 3 pour Mercredi, 4 pour Jeudi, 5 pour Vendredi, 6 pour Samedi, 7 pour Dimanche) : ");
+                        String choixJour = scanner.nextLine();
+                        int jour = Integer.parseInt(choixJour);
+                        if (jour >= 1 && jour <= 7) {
+                            System.out.print("Entrez votre plage horaire pour ce jour (format HH:MM-HH:MM) : ");
+                            String horaire = scanner.nextLine();
+                            ((Resident) utilisateurCourant).getPlageHoraire().modifierPlageHoraire(jour, horaire);
+                            System.out.println("La plage horaire a été modifiée avec succès.");
+                            menuPlageHoraire();
+                        } else {
+                            System.out.println("Jour invalide, veuillez réessayer.");
+                            menuPlageHoraire();
+                        }
+                    }
+                    break;
+                case 2:
+                    
+                    if (((Resident) utilisateurCourant).isPlageHoraireEmpty()) {
+                        System.out.println("Aucune plage horaire définie.");
+                        menuPlageHoraire();
+                    } else {
+                        System.out.println("\n" + ((Resident) utilisateurCourant).getPlageHoraire().toString());
+                        menuPlageHoraire();
+                    }
+                    break;
+                case 3:
+                    PlageHoraire tmpPlageHoraire = new PlageHoraire("","","","","","","");
+                    ((Resident) utilisateurCourant).setPlageHoraire(tmpPlageHoraire);
+
+                    ((Resident) utilisateurCourant).getPlageHoraire().nouvellePlageHoraire(scanner);
+                    System.out.println("Plage horaire ajoutée avec succès.");
+                    menuPlageHoraire();
+                    break;
+                case 4:
+                    menuResident();
+                    break;
+                default:
+                    System.out.println("Option invalide, veuillez réessayer.");
+            }
+        } while (choix != 4);
     }
 
     private static void choisirCandidatureEtFermerRequete() {
@@ -473,7 +544,7 @@ public class Main {
             System.out.println("2. Retirer une candidature");
             System.out.println("3. Voir mes candidatures actives");
             System.out.println("4. Confirmer une candidature");
-            System.out.println("5. Retour au menu principal");
+            System.out.println("5. Deconnexion");
             System.out.print("Choisissez une option : ");
             choix = lireEntier();
             scanner.nextLine();
@@ -492,7 +563,8 @@ public class Main {
                     confirmerCandidature();
                     break;
                 case 5:
-                    System.out.println("Retour au menu principal ...");
+                    System.out.println("Déconnexion...");
+                    menuPrincipal();
                     break;
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
