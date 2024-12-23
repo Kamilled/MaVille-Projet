@@ -3,12 +3,11 @@ MaVille est une application conçue pour améliorer la gestion et la communicati
 
 Organisation du Répertoire
 Le projet est organisé comme suit :
-Le projet est organisé comme suit :
 
 prototype[MV]/
 diagrammes/ : Contient les diagrammes de cas d'utilisation, d'activités, de classes et de séquence en format PNG.
 src/
-main/java/com/example/prototype/ : Contient le code source principal de l'application.
+main/java/com.example.prototype/ : Contient le code source principal de l'application.
 Main.java
 RequeteDeTravail.java
 RestApiServer.java
@@ -22,7 +21,7 @@ TypeIntervenant.java
 TypeTravaux.java
 Statut.java
 module-info.java
-test/java/com/example/prototype/ : Contient les classes de tests unitaires utilisant JUnit.
+test/java/com.example.prototype/ : Contient les classes de tests unitaires utilisant JUnit.
 GestionnaireDonneesTest.java
 FiltreTravauxTest.java
 EntraveTest.java
@@ -41,9 +40,9 @@ Prérequis
 Pour exécuter ce projet, vous aurez besoin de Java JDK 16 ou supérieur, de Maven 3.6 ou supérieur, de Git (pour cloner le dépôt) et d'un accès Internet (pour télécharger les dépendances et accéder aux API de la Ville de Montréal).
 
 Instructions
-Cloner le dépôt GitHub du projet en exécutant la commande suivante dans votre terminal : git clone https://github.com/kamilled/MaVille.git.
+Cloner le dépôt GitHub du projet en exécutant la commande suivante dans votre terminal : git clone https://github.com/kamilled/IFT2255-Devoir1-Groupe-36.git.
 
-Naviguer dans le répertoire du projet avec la commande : cd MaVille/prototype[MV].
+Naviguer dans le répertoire du projet avec la commande : cd IFT2255-Devoir1-Groupe-36/prototype[MV].
 
 Installer les dépendances et compiler le projet avec Maven en exécutant : mvn clean install.
 
@@ -127,3 +126,15 @@ Les données sont persistées dans un fichier JSON (donnees.json) pour conserver
 
 Déploiement 
 Dépot GitHub: https://github.com/Kamilled/IFT2255-Devoir1-Groupe-36
+
+Instructions pour les Tests
+Vérifiez que les prérequis sont installés (Java, Maven, Git).
+Clonez le dépôt en exécutant :
+git clone https:https://github.com/Kamilled/IFT2255-Devoir1-Groupe-36
+Naviguez dans le répertoire du projet :
+cd IFT2255-Devoir1-Groupe-36/prototype[MV]
+Exécutez les tests avec la commande :
+mvn test
+Consultez les résultats des tests qui seront affichés dans la console et disponibles dans le dossier target/surefire-reports.
+Générez le rapport de couverture des tests avec JaCoCo :
+mvn jacoco:report
