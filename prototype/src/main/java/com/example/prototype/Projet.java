@@ -32,7 +32,6 @@ public class Projet {
     private String horaireTravaux;
     private String intervenantId;
 
-<<<<<<< HEAD
     /**
      * Constructeur pour créer une nouvelle instance de {@code Projet}.
      *
@@ -47,9 +46,6 @@ public class Projet {
      * @param intervenantId      l'identifiant de l'intervenant associé au projet.
      */
     public Projet( String titreProjet, TypeTravaux typeTravaux, List<String> quartiersAffectes, List<String> ruesAffectees, int dateDebut, int dateFin,
-=======
-    public Projet(String titreProjet, TypeTravaux typeTravaux, List<String> quartiersAffectes, List<String> ruesAffectees, int dateDebut, int dateFin,
->>>>>>> bdac617dd3c7270057f5cd305e40e820a299193f
                   String descriptionProjet, String horaireTravaux, String intervenantId) {
         this.statut = Statut.PREVU;
         this.titreProjet = titreProjet;
@@ -63,7 +59,6 @@ public class Projet {
         this.intervenantId = intervenantId;
     }
 
-<<<<<<< HEAD
     /**
      * Obtient le statut actuel du projet.
      *
@@ -79,15 +74,6 @@ public class Projet {
      */
     public void setStatutPrevu(Statut statutPrevu) {
         this.statut = statutPrevu;
-=======
-    // Getters et Setters
-    public Statut getStatut() {
-        return statut;
-    }
-
-    public void setStatut(Statut statut) {
-        this.statut = statut;
->>>>>>> bdac617dd3c7270057f5cd305e40e820a299193f
     }
     /**
      * Obtient le titre du projet.
@@ -123,14 +109,11 @@ public class Projet {
         this.typeTravaux = typeTravaux;
     }
 
-<<<<<<< HEAD
     /**
      * Obtient la liste des quartiers affectés par le projet.
      *
      * @return la liste des quartiers affectés.
      */
-=======
->>>>>>> bdac617dd3c7270057f5cd305e40e820a299193f
     public List<String> getQuartiersAffectes() {
         return quartiersAffectes;
     }
@@ -244,16 +227,11 @@ public class Projet {
     public void setIntervenantId(String intervenantId) {
         this.intervenantId = intervenantId;
     }
-<<<<<<< HEAD
     /**
      * Met à jour la description du projet.
      *
      * @param description la nouvelle description à attribuer au projet.
      */
-=======
-
-    // Mise à jour des informations du projet
->>>>>>> bdac617dd3c7270057f5cd305e40e820a299193f
     public void misAJourProjetDescription(String description) {
         this.descriptionProjet = description;
     }
