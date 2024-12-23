@@ -9,10 +9,38 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import io.javalin.Javalin;
-
+/**
+ * Gère le serveur REST API pour l'application MaVille.
+ * <p>
+ * Cette classe initialise et configure le serveur REST API en utilisant Javalin. Elle
+ * fournit des endpoints pour gérer les requêtes de travail, ainsi que pour interagir
+ * avec une API publique de travaux à Montréal.
+ * </p>
+ *
+ * <p>
+ * Les endpoints incluent :
+ * <ul>
+ *   <li>GET "/" : Page d'accueil de l'API.</li>
+ *   <li>GET "/requetes" : Récupère toutes les requêtes de travail.</li>
+ *   <li>POST "/requetes" : Crée une nouvelle requête de travail.</li>
+ *   <li>PUT "/requetes/{id}" : Met à jour une requête de travail existante.</li>
+ *   <li>DELETE "/requetes/{id}" : Supprime une requête de travail.</li>
+ *   <li>GET "/travaux-publics" : Récupère les travaux publics depuis une API externe.</li>
+ * </ul>
+ * </p>
+ *
+ * @author
+ *         Kamille Denault-Geoffroy
+ *         Aya Elbroumi
+ */
 public class RestApiServer {
     private Javalin app;
     private List<RequeteDeTravail> requetes;
+    /**
+     * Constructeur pour initialiser le serveur REST API avec une liste de requêtes de travail.
+     *
+     * @param requetes la liste initiale des requêtes de travail à gérer par l'API.
+     */
 
     public RestApiServer(List<RequeteDeTravail> requetes) {
         this.requetes = requetes;
@@ -100,6 +128,12 @@ public class RestApiServer {
         });
     }
 
+    /**
+     * Démarre le serveur REST API sur le port spécifié.
+     * <p>
+     * Cette méthode lance le serveur et le rend accessible via le port 8080.
+     * </p>
+     */
     public void start() {
         app.start(8080);
     }

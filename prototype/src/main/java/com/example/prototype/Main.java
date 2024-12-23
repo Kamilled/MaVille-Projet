@@ -12,18 +12,71 @@ import java.util.Scanner;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
+/**
+ * Classe principale de l'application MaVille.
+ * <p>
+ * Gère le démarrage de l'application, la navigation dans les menus,
+ * et l'interaction avec l'utilisateur en ligne de commande.
+ * </p>
+ * <p>
+ * Cette classe contient les méthodes principales pour l'authentification des utilisateurs,
+ * la gestion des requêtes de travail, la consultation des travaux en cours,
+ * et l'interaction avec l'API REST locale.
+ * </p>
+ *
+ * @author
+ *          Kamille Denault-Geoffroy
+ *          Aya Elbroumi
+ *          Yitian Chen
+ */
 public class Main {
+    /**
+     * Liste des utilisateurs enregistrés dans le système.
+     */
     private static List<Utilisateur> utilisateurs = new ArrayList<>();
+    /**
+     * Liste des requêtes de travail soumises par les résidents.
+     */
     private static List<RequeteDeTravail> requetes = new ArrayList<>();
+    /**
+     * Liste des projets de travaux créés par les intervenants.
+     */
     private static List<Projet> projets = new ArrayList<>();
+    /**
+     * Liste des entraves routières causées par les travaux.
+     */
     private static List<Entrave> entraves = new ArrayList<>();
+    /**
+     * Scanner pour lire les entrées de l'utilisateur depuis la console.
+     */
     private static Scanner scanner = new Scanner(System.in);
+    /**
+     * Utilisateur actuellement connecté.
+     */
     private static Utilisateur utilisateurCourant;
 
-
+    /**
+     * Point d'entrée de l'application MaVille.
+     */
     public static void main(String[] args) {
-        initialiserDonnees();
+        GestionnaireDonnees.RegistreDonnees registreCharge =
+                GestionnaireDonnees.chargerToutesDonnees();
+        if (registreCharge.listeUtilisateurs.isEmpty()
+                && registreCharge.listeRequetes.isEmpty()
+                && registreCharge.listeProjets.isEmpty()
+                && registreCharge.listeEntraves.isEmpty()) {
+            System.out.println("Aucune donnée rechargée. "
+                    + "Initialisation des données par défaut...");
+            initialiserDonnees();
+        } else {
+            // Les données rechargées sont injectées dans nos listes
+            utilisateurs = registreCharge.listeUtilisateurs;
+            requetes = registreCharge.listeRequetes;
+            projets = registreCharge.listeProjets;
+            entraves = registreCharge.listeEntraves;
+            System.out.println("Données rechargées depuis donnees.json !");
+        }
+
         RestApiServer server = new RestApiServer(requetes);
         server.start();
 
@@ -61,11 +114,21 @@ public class Main {
                     +" réessayer.");
             }
         } while (choixPrincipal != 4);
-
-        System.out.println("Système terminé.");
+        GestionnaireDonnees.sauvegarderToutesDonnees(
+                utilisateurs,
+                requetes,
+                projets,
+                entraves
+        );
+        System.out.println("Données sauvegardées. Système terminé.");
     }
 
-    // Affiche le menu principal
+
+    /**
+     * Affiche et gère le menu principal de l'application.
+     *
+     * @return Le choix de l'utilisateur.
+     */
     public static int menuPrincipal() {
         System.out.println("\n--- Menu Principal ---");
         System.out.println("1. Connexion en tant que résident");
@@ -76,8 +139,10 @@ public class Main {
         return scanner.nextInt();
     }
 
-    // Initialiser les données : 3 utilisateurs (résidents et intervenants) 
-    // et 3 requêtes
+
+    /**
+     * Initialise les données par défaut (résidents, intervenants, requêtes, projets, entraves).
+     */
     public static void initialiserDonnees() {
         
         Utilisateur resident1 = new Resident("nom1","aaaa/mm/jj",
@@ -102,65 +167,65 @@ public class Main {
         Utilisateur intervenant5 = new Intervenant("nom5",
          TypeIntervenant.ENTREPRENEURPRIVE, "5@gmail.com", "123", 44444444);
 
-        RequeteDeTravail requete1 = 
+        RequeteDeTravail requete1 =
         new RequeteDeTravail("Réparer le lampadaire",
          "Le lampadaire est tombé.", TypeTravaux.TRAVAUXROUTIERS, 5);
 
-        RequeteDeTravail requete2 = 
+        RequeteDeTravail requete2 =
         new RequeteDeTravail("Réparer un trou dans la rue",
          "Trou de 1 mètre de diamètre.", TypeTravaux.TRAVAUXROUTIERS, 2);
 
-        RequeteDeTravail requete3 = 
+        RequeteDeTravail requete3 =
         new RequeteDeTravail("Nettoyer le parc",
-         "De nombreuse tâches brunes sont sur les modules.", 
+         "De nombreuse tâches brunes sont sur les modules.",
          TypeTravaux.ENTRETIENURBAIN, 4);
 
-        RequeteDeTravail requete4 = 
+        RequeteDeTravail requete4 =
         new RequeteDeTravail("Installer un banc",
          "À l'intersection Ducharme et Beauchamp, plusieurs enfant attendent"
          +" l'autobus scolaire et un banc leur permetteront de s'asseoir.",
           TypeTravaux.ENTRETIENPAYSAGER, 1);
 
-        RequeteDeTravail requete5 = 
+        RequeteDeTravail requete5 =
         new RequeteDeTravail("Peindre les clôtures",
          "Peinture de la clotûre d'une coure de 8 mètres sur 9 mètre.",
           TypeTravaux.ENTRETIENPAYSAGER, 4);
-        
+
         Projet projet1 = new Projet("Projet 1", TypeTravaux.TRAVAUXROUTIERS,
          List.of("Quartier 1", "Quartier 2"), List.of("Rue 1", "Rue 2"),
           20260101, 202600430, "Description du projet 1", "Horaire 1",
            "Intervenant 1");
-        Entrave entrave1 = new Entrave(projet1.getTitreProjet(), 
+        Entrave entrave1 = new Entrave(projet1.getTitreProjet(),
         projet1.getRuesAffectees()); // Entrave associée au projet 1
 
         Projet projet2 = new Projet("Projet 2",
-         TypeTravaux.TRAVAUXGAZELECTRICITE, 
+         TypeTravaux.TRAVAUXGAZELECTRICITE,
          List.of("Quartier 3", "Quartier 4"), List.of("Rue 3", "Rue 4"),
           20250101, 20251002, "Description du projet 2",
            "Horaire 2", "Intervenant 2");
-        Entrave entrave2 = new Entrave(projet2.getTitreProjet(), 
+        Entrave entrave2 = new Entrave(projet2.getTitreProjet(),
         projet2.getRuesAffectees()); // Entrave associée au projet 2
-        
-        Projet projet3 = new Projet("Projet 3", 
-        TypeTravaux.CONSTRUCTIONRENOVATION, List.of("Quartier 5", 
-        "Quartier 6"), List.of("Rue 5", "Rue 6"), 20250201, 
-        20250505, "Description du projet 3", "Horaire 3", 
+
+        Projet projet3 = new Projet("Projet 3",
+        TypeTravaux.CONSTRUCTIONRENOVATION, List.of("Quartier 5",
+        "Quartier 6"), List.of("Rue 5", "Rue 6"), 20250201,
+        20250505, "Description du projet 3", "Horaire 3",
         "Intervenant 3");
-        Entrave entrave3 = new Entrave(projet3.getTitreProjet(), 
+        Entrave entrave3 = new Entrave(projet3.getTitreProjet(),
         projet3.getRuesAffectees()); // Entrave associée au projet 3
-        
-        Projet projet4 = new Projet("Projet 4", TypeTravaux.ENTRETIENPAYSAGER, 
-        List.of("Quartier 7", "Quartier 8"), List.of("Rue 7", "Rue 8"), 
-        20250708, 20260720, "Description du projet 4", "Horaire 4", 
+
+        Projet projet4 = new Projet("Projet 4", TypeTravaux.ENTRETIENPAYSAGER,
+        List.of("Quartier 7", "Quartier 8"), List.of("Rue 7", "Rue 8"),
+        20250708, 20260720, "Description du projet 4", "Horaire 4",
         "Intervenant 4");
-        Entrave entrave4 = new Entrave(projet4.getTitreProjet(), 
+        Entrave entrave4 = new Entrave(projet4.getTitreProjet(),
         projet4.getRuesAffectees()); // Entrave associée au projet 4
-        
-        Projet projet5 = new Projet("Projet 5", 
-        TypeTravaux.TRAVAUXTRANSPORTPUBLIC, List.of("Quartier 9", 
-        "Quartier 10"), List.of("Rue 9", "Rue 10"), 20270214, 
+
+        Projet projet5 = new Projet("Projet 5",
+        TypeTravaux.TRAVAUXTRANSPORTPUBLIC, List.of("Quartier 9",
+        "Quartier 10"), List.of("Rue 9", "Rue 10"), 20270214,
         20300110, "Description du projet 5", "Horaire 5", "Intervenant 5");
-        Entrave entrave5 = new Entrave(projet5.getTitreProjet(), 
+        Entrave entrave5 = new Entrave(projet5.getTitreProjet(),
         projet5.getRuesAffectees()); // Entrave associée au projet 5
 
         utilisateurs.add(resident1);
@@ -194,7 +259,12 @@ public class Main {
         entraves.add(entrave5);
     }
 
-
+    /**
+     * Gère la connexion de l'utilisateur (résident ou intervenant) en fonction du choix principal.
+     *
+     * @param choixPrincipal Le choix de l'utilisateur (1 = résident, 2 = intervenant).
+     * @return true si la connexion réussit, false sinon.
+     */
     private static boolean connexion(int choixPrincipal) {
         scanner.nextLine(); // Vider le tampon d'entrée
         System.out.print("Entrez votre email : ");
@@ -204,11 +274,11 @@ public class Main {
 
         for (Utilisateur utilisateur : utilisateurs) {
             if (utilisateur.authentifier(email, motDePasse)) {
-                if (utilisateur instanceof  Resident 
+                if (utilisateur instanceof  Resident
                 || utilisateur instanceof Intervenant) {
                     utilisateurCourant = utilisateur;
 
-                    System.out.println("Bienvenue, " + 
+                    System.out.println("Bienvenue, " +
                     utilisateur.getNomComplet() + " !");
 
                     return true;
@@ -224,16 +294,26 @@ public class Main {
         +"mot de passe incorrect.");
         return false;
     }
-
+    /**
+     * Gère le processus d'inscription des nouveaux utilisateurs dans l'application.
+     *
+     * Cette méthode permet à un utilisateur de s'inscrire en tant que résident ou intervenant.
+     * Elle invite l'utilisateur à entrer ses informations personnelles telles que le nom complet,
+     * la date de naissance, l'email, le mot de passe, et l'adresse résidentielle ou
+     * l'identifiant de la ville selon le type d'utilisateur choisi.
+     *
+     * La méthode valide les entrées de l'utilisateur et crée un nouvel objet
+     *
+     * @return un entier représentant le type d'utilisateur inscrit
+     */
     private static int inscription() {
-        scanner.nextLine(); 
+        scanner.nextLine();
         int role = 0;
 
-        // Loop jusqu'à ce qu'un rôle valide soit entré
         while (true) {
             System.out.print("Êtes-vous un résident ou un intervenant ? ");
             System.out.print("Entrez 1 pour résident ou 2 pour intervenant :");
-            
+
             try {
                 role = scanner.nextInt();
                 if (role == 1 || role == 2) {
@@ -245,11 +325,11 @@ public class Main {
             } catch (InputMismatchException e) {
                 System.out.println("Entrée invalide, veuillez entrer un "
                 +"nombre  entre 1 ou 2");
-                scanner.next(); 
+                scanner.next();
             }
         }
 
-        scanner.nextLine(); 
+        scanner.nextLine();
 
         if (role == 1) {
             System.out.print("Entrez votre nom complet: ");
@@ -267,18 +347,18 @@ public class Main {
             System.out.print("Entrez votre adresse résidentielle : ");
             String adresse = scanner.nextLine();
 
-            Utilisateur nouvelUtilisateur = 
+            Utilisateur nouvelUtilisateur =
             new Resident(nomComplet, dateNaissance, email, motDePasse,adresse);
             utilisateurs.add(nouvelUtilisateur);
             utilisateurCourant = nouvelUtilisateur;
-            
-            
+
+
 
             System.out.println("Utilisateur créé avec succès!");
             return 1;
-           
 
-        
+
+
         } else if (role == 2) {
             System.out.print("Entrez votre nom complet: ");
             String nomComplet = scanner.nextLine();
@@ -304,10 +384,10 @@ public class Main {
                 }
             }
 
-            TypeIntervenant typeIntervenant = 
+            TypeIntervenant typeIntervenant =
             TypeIntervenant.values()[typeIntervenantInt - 1];
 
-            scanner.nextLine(); 
+            scanner.nextLine();
 
             System.out.print("Entrez votre email : ");
             String email = scanner.nextLine();
@@ -333,24 +413,30 @@ public class Main {
                 } catch (InputMismatchException e) {
                     System.out.println("Entrée invalide. Veuillez "
                     +"entrer un nombre à 8 chiffres.");
-                    scanner.next(); 
+                    scanner.next();
                 }
             }
 
-            Utilisateur nouvelUtilisateur = 
-            new Intervenant(nomComplet, typeIntervenant, 
+            Utilisateur nouvelUtilisateur =
+            new Intervenant(nomComplet, typeIntervenant,
             email, motDePasse, identifiantVille);
-            
+
             utilisateurs.add(nouvelUtilisateur);
             utilisateurCourant = nouvelUtilisateur;
 
             System.out.println("Utilisateur créé avec succès!");
             return 2;
-            
-        }
-        return 0;  
-    }
 
+        }
+        return 0;
+    }
+    /**
+     * Affiche et gère le menu spécifique aux résidents.
+     *
+     * Cette méthode permet aux résidents de soumettre des requêtes de travail,
+     * de consulter l'état des travaux, de voir leurs requêtes, de choisir une
+     * candidature et de modifier leur plage horaire.
+     */
     private static void menuResident() {
         int choix;
         do {
@@ -391,7 +477,12 @@ public class Main {
             }
         } while (choix != 6);
     }
-
+    /**
+     * Gère les plages horaires préférées d'un résident.
+     *
+     * Cette méthode permet aux résidents de modifier, consulter ou ajouter des plages horaires
+     * pour la réalisation des travaux.
+     */
     public static void menuPlageHoraire() {
         int choix;
         Scanner scanner = new Scanner(System.in);
@@ -440,12 +531,12 @@ public class Main {
                     }
                     break;
                 case 2:
-                    
+
                     if (((Resident) utilisateurCourant).isPlageHoraireEmpty()) {
                         System.out.println("Aucune plage horaire définie.");
                         menuPlageHoraire();
                     } else {
-                        System.out.println("\n" + 
+                        System.out.println("\n" +
                         ((Resident) utilisateurCourant).
                         getPlageHoraire().toString());
 
@@ -453,7 +544,7 @@ public class Main {
                     }
                     break;
                 case 3:
-                    PlageHoraire tmpPlageHoraire = 
+                    PlageHoraire tmpPlageHoraire =
                     new PlageHoraire("","","","","","","");
                     ((Resident) utilisateurCourant).setPlageHoraire(tmpPlageHoraire);
 
@@ -471,7 +562,13 @@ public class Main {
             }
         } while (choix != 4);
     }
-
+    /**
+     * Permet au résident de choisir une candidature et de fermer une requête.
+     *
+     * Cette méthode affiche les requêtes avec des candidatures disponibles,
+     * permet au résident de sélectionner une candidature, ajouter un message,
+     * et fermer la requête en sélectionnant le candidat.
+     */
     private static void choisirCandidatureEtFermerRequete() {
         List<RequeteDeTravail> requetesAvecCandidatures = requetes.stream()
                 .filter(r -> !r.estFermee() && !r.getCandidatures().isEmpty())
@@ -485,7 +582,7 @@ public class Main {
 
         System.out.println("Requêtes avec des candidatures : ");
         for (RequeteDeTravail requete : requetesAvecCandidatures) {
-            System.out.println("ID: " + requete.getId() + 
+            System.out.println("ID: " + requete.getId() +
             " , Description: " + requete.getDescription());
 
             System.out.println("Candidatures :");
@@ -503,9 +600,9 @@ public class Main {
         scanner.nextLine();
 
         RequeteDeTravail requete = requetes.stream()
-                .filter(r -> r.getId() == idRequete && !r.estFermee() 
+                .filter(r -> r.getId() == idRequete && !r.estFermee()
                 && !r.getCandidatures().isEmpty())
-                
+
                 .findFirst()
                 .orElse(null);
 
@@ -521,7 +618,7 @@ public class Main {
             int choixCandidature = scanner.nextInt();
             scanner.nextLine();
 
-            if (choixCandidature < 1 
+            if (choixCandidature < 1
             || choixCandidature > candidatures.size()) {
                 System.out.println("Choix invalide.");
                 return;
@@ -537,7 +634,7 @@ public class Main {
             }
             requete.setCandidatSelectionne(candidat);
             requete.fermer();
-            System.out.println("La requête a été fermée avec le candidat : " 
+            System.out.println("La requête a été fermée avec le candidat : "
             + candidat.getEmail());
 
             if (!requete.getMessage().isEmpty()) {
@@ -549,7 +646,13 @@ public class Main {
         }
     }
 
-
+    /**
+     * Affiche l'état des travaux en cours ou à venir.
+     * <p>
+     * Cette méthode affiche les travaux internes et les travaux publics
+     * récupérés via l'API REST locale.
+     * </p>
+     */
     private static void consulterEtatTravaux() {
         int choix;
         do {
@@ -584,6 +687,9 @@ public class Main {
             }
         } while (choix != 5);
     }
+    /**
+     * Filtre et affiche les travaux publics par arrondissement (borough).
+     */
     private static void filterTravauxPublicsByBorough() {
         System.out.print("Entrez l’ID de l’arrondissement (boroughid) à filtrer : ");
         String boroughIdRecherche = scanner.nextLine().trim();
@@ -636,6 +742,28 @@ public class Main {
             System.out.println("Erreur : " + e.getMessage());
         }
     }
+    /**
+     * Filtre les travaux publics par arrondissement dans un tableau JSON.
+     *
+     * @param travaux               le JSONArray contenant les travaux publics.
+     * @param boroughIdRecherche    l'ID de l'arrondissement à rechercher.
+     * @return une liste de {@link JSONObject} correspondant aux travaux filtrés.
+     */
+    public static List<JSONObject> filtrerTravauxParBorough(JSONArray travaux, String boroughIdRecherche) {
+        List<JSONObject> resultats = new ArrayList<>();
+        for (int i = 0; i < travaux.length(); i++) {
+            JSONObject travail = travaux.getJSONObject(i);
+            String boroughId = travail.optString("boroughid", "N/A");
+            if (boroughId.equals(boroughIdRecherche)) {
+                resultats.add(travail);
+            }
+        }
+        return resultats;
+    }
+
+    /**
+     * Filtre et affiche les entraves publiques par rue (shortname).
+     */
     private static void filterEntravesPublicsByStreet() {
         System.out.print("Entrez le nom abrégé de la rue (shortname) : ");
         String rueRecherchee = scanner.nextLine().trim();
@@ -688,7 +816,9 @@ public class Main {
 
 
 
-
+    /**
+     * Permet à un résident de soumettre une candidature à une requête de travail.
+     */
     private static void soumettreCandidature() {
         voirRequetesTravail();
         System.out.print("Entrez l'ID de la requête à laquelle vous voulez "
@@ -709,9 +839,12 @@ public class Main {
         }
     }
 
+    /**
+     * Permet à un utilisateur de retirer une candidature active.
+     */
     private static void retirerCandidature() {
         List<RequeteDeTravail> canditatures = requetes.stream()
-                .filter(r -> r.getCandidatures().contains(utilisateurCourant) 
+                .filter(r -> r.getCandidatures().contains(utilisateurCourant)
                 && !r.estFermee())
                 .toList();
 
@@ -722,7 +855,7 @@ public class Main {
 
         System.out.println("Vos candidatures actives :");
         for (RequeteDeTravail requete : canditatures) {
-            System.out.println("ID: " + requete.getId() + "Description: " 
+            System.out.println("ID: " + requete.getId() + "Description: "
             + requete.getDescription());
         }
 
@@ -745,6 +878,9 @@ public class Main {
             +"inexistante.");
         }
     }
+    /**
+     * Affiche les candidatures actives d'un intervenant.
+     */
     private static void voirCandidaturesIntervenant(){
         System.out.println("\n--- Vos Candidatures Actives ---");
         List<RequeteDeTravail> candidatures = requetes.stream()
@@ -758,12 +894,15 @@ public class Main {
         }
 
         for (RequeteDeTravail requete : candidatures) {
-            System.out.println("ID: " + requete.getId() + ", Description: " 
+            System.out.println("ID: " + requete.getId() + ", Description: "
             + requete.getDescription());
         }
     }
 
-
+    /**
+     * Gère les requêtes des intervenants, permettant de soumettre, retirer
+     * et confirmer des candidatures.
+     */
     private static void gererRequetesIntervenant() {
         int choix;
         do {
@@ -802,29 +941,32 @@ public class Main {
 
 
 
+    /**
+     * Crée une nouvelle requête de travail en interagissant avec l'API REST.
+     */
     private static void creerRequeteTravail() {
         System.out.print("Entrez la description de la requête : ");
         String description = scanner.nextLine();
         try {
             URL url = new URL("http://localhost:7000/requetes");
-            HttpURLConnection connection = 
+            HttpURLConnection connection =
             (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type",
             "application/X-www-form-urlencoded");
-            connection.getOutputStream().write(("description=" 
+            connection.getOutputStream().write(("description="
             + description).getBytes());
 
             if (connection.getResponseCode()==201){
-                BufferedReader reader = 
+                BufferedReader reader =
                 new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
                 String response = reader.readLine();
                 System.out.println("Requête créée avec succès : " +response);
                 reader.close();
             } else {
-                System.out.println("Erreur lors de la création de la requête :" 
+                System.out.println("Erreur lors de la création de la requête :"
                 + connection.getResponseCode());
             }
             connection.disconnect();
@@ -833,6 +975,9 @@ public class Main {
         }
     }
 
+    /**
+     * Affiche toutes les requêtes de travail enregistrées.
+     */
     private static void voirRequetesTravail() {
         System.out.println("\nToutes les requêtes de travail :");
         for (RequeteDeTravail requete : requetes) {
@@ -840,11 +985,11 @@ public class Main {
         }
     }
 
-
+    /**
+     * Consulte et affiche les travaux en cours ou à venir, incluant les travaux internes et publics.
+     */
     private static void consulterTravauxEnCours() {
-        // Consulter les travaux en cours ou à venir
         System.out.println("\nTravaux en cours ou à venir :");
-        // Afficher les travaux internes
         System.out.println("\nTravaux internes :");
         for (RequeteDeTravail requete : requetes) {
             System.out.println("ID : " + requete.getId());
@@ -853,18 +998,17 @@ public class Main {
             System.out.println("------------------------");
         }
 
-        // Ajouter les travaux publics
         System.out.println("\nTravaux publics :");
         try {
 
             String apiUrl = "http://localhost:7000/travaux-publics";
             URL url = new URL(apiUrl);
-            HttpURLConnection connection = 
+            HttpURLConnection connection =
             (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
             if (connection.getResponseCode()== 200){
-                BufferedReader reader = 
+                BufferedReader reader =
                 new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
@@ -874,24 +1018,24 @@ public class Main {
                 }
                 reader.close();
 
-                // Parse JSON et afficher les travaux
+
                 JSONArray travauxPublics = new JSONArray(response.toString());
                 if (travauxPublics.length() > 0) {
                     for (int i = 0; i < travauxPublics.length(); i++) {
                         JSONObject travail = travauxPublics.getJSONObject(i);
-                        System.out.println("ID : " 
+                        System.out.println("ID : "
                         + travail.optString("id", "N/A"));
 
-                        System.out.println("Arrondissement : " 
+                        System.out.println("Arrondissement : "
                         + travail.optString("boroughid", "N/A"));
 
-                        System.out.println("Statut : " 
+                        System.out.println("Statut : "
                         + travail.optString("currentstatus", "N/A"));
 
-                        System.out.println("Motif : " 
+                        System.out.println("Motif : "
                         + travail.optString("reason_category", "N/A"));
 
-                        System.out.println("Intervenant : " 
+                        System.out.println("Intervenant : "
                         + travail.optString("organizationname", "N/A"));
 
                         System.out.println("------------------------");
@@ -901,7 +1045,7 @@ public class Main {
                 }
             } else {
                 System.out.println(
-                    "Erreur lors de la récupération des travaux publics : " 
+                    "Erreur lors de la récupération des travaux publics : "
                     + connection.getResponseCode());
             }
             connection.disconnect();
@@ -911,20 +1055,21 @@ public class Main {
     }
 
 
-
-    // Consulter les entraves
+    /**
+     * Consulte et affiche les entraves routières causées par les travaux en cours.
+     */
     private static void consulterLesEntraves() {
         System.out.println("\nEntraves routières causées par "
         +"les travaux en cours :");
         try {
             String apiUrl = "http://localhost:7000/entraves-publics";
             URL url = new URL(apiUrl);
-            HttpURLConnection connection = 
+            HttpURLConnection connection =
             (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
             if (connection.getResponseCode() == 200) {
-                BufferedReader reader = 
+                BufferedReader reader =
                 new BufferedReader(
                     new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
@@ -939,11 +1084,11 @@ public class Main {
                 if (entraves.length() > 0) {
                     for (int i = 0; i < entraves.length(); i++) {
                         JSONObject entrave = entraves.getJSONObject(i);
-                        System.out.println("ID Travail : " 
+                        System.out.println("ID Travail : "
                         + entrave.optString("id_request", "N/A"));
-                        System.out.println("Rue : " 
+                        System.out.println("Rue : "
                         + entrave.optString("shortname", "N/A"));
-                        System.out.println("Impact : " 
+                        System.out.println("Impact : "
                         + entrave.optString("streetimpacttype", "N/A"));
                         System.out.println("------------------------");
                     }
@@ -951,7 +1096,7 @@ public class Main {
                     System.out.println("Aucune entrave trouvée.");
                 }
             } else {
-                System.out.println("Erreur lors de la récupération des entraves : " 
+                System.out.println("Erreur lors de la récupération des entraves : "
                 + connection.getResponseCode());
             }
             connection.disconnect();
@@ -960,6 +1105,9 @@ public class Main {
         }
     }
 
+    /**
+     * Confirme une candidature sélectionnée pour une requête de travail.
+     */
     private static void confirmerCandidature() {
         System.out.println("\n--- Confirmer une Candidature ---");
         List<RequeteDeTravail> requetesSelectionnees = requetes.stream()
@@ -974,7 +1122,7 @@ public class Main {
 
         System.out.println("Candidatures à confirmer :");
         for (RequeteDeTravail requete : requetesSelectionnees) {
-            System.out.println("ID: " + requete.getId() + ", Description: " 
+            System.out.println("ID: " + requete.getId() + ", Description: "
             + requete.getDescription());
         }
 
@@ -998,14 +1146,18 @@ public class Main {
         }
 
     }
+    /**
+     * Lit un entier saisi par l'utilisateur, avec gestion des exceptions.
+     *
+     * @return l'entier saisi.
+     */
     private static int lireEntier() {
         while (true) {
             try {
                 return scanner.nextInt();
             } catch (Exception e) {
                 System.out.println("Veuillez entrer un nombre valide.");
-                // Vide le buffer pour éviter une boucle infinie
-                scanner.nextLine(); 
+                scanner.nextLine();
             }
         }
     }

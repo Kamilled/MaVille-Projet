@@ -6,6 +6,7 @@ module com.example.test {
     requires org.slf4j;
     requires org.junit.jupiter.api;
     requires com.example.prototype;
+    requires junit;
 
 
     exports com.example.test;
