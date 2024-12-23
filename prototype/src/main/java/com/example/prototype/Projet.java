@@ -15,7 +15,7 @@ public class Projet {
     private String horaireTravaux;
     private String intervenantId;
 
-    public Projet( String titreProjet, TypeTravaux typeTravaux, List<String> quartiersAffectes, List<String> ruesAffectees, int dateDebut, int dateFin,
+    public Projet(String titreProjet, TypeTravaux typeTravaux, List<String> quartiersAffectes, List<String> ruesAffectees, int dateDebut, int dateFin,
                   String descriptionProjet, String horaireTravaux, String intervenantId) {
         this.statut = Statut.PREVU;
         this.titreProjet = titreProjet;
@@ -30,12 +30,12 @@ public class Projet {
     }
 
     // Getters et Setters
-    public Statut getStatutPrevu() {
+    public Statut getStatut() {
         return statut;
     }
 
-    public void setStatutPrevu(Statut statutPrevu) {
-        this.statut = statutPrevu;
+    public void setStatut(Statut statut) {
+        this.statut = statut;
     }
 
     public String getTitreProjet() {
@@ -53,7 +53,6 @@ public class Projet {
     public void setTypeTravaux(TypeTravaux typeTravaux) {
         this.typeTravaux = typeTravaux;
     }
-
 
     public List<String> getQuartiersAffectes() {
         return quartiersAffectes;
@@ -111,6 +110,7 @@ public class Projet {
         this.intervenantId = intervenantId;
     }
 
+    // Mise à jour des informations du projet
     public void misAJourProjetDescription(String description) {
         this.descriptionProjet = description;
     }
@@ -122,5 +122,26 @@ public class Projet {
     public void misAJourProjetStatut(Statut statut) {
         this.statut = statut;
     }
-}
 
+    // Implementer les méthodes manquantes:
+
+    // Retourne les quartiers sous forme de chaîne de caractères séparée par des virgules
+    public String getQuartiers() {
+        return String.join(", ", quartiersAffectes);
+    }
+
+    // Retourne la description du projet
+    public String getDescription() {
+        return descriptionProjet;
+    }
+
+    // Retourne l'horaire des travaux
+    public String getHoraire() {
+        return horaireTravaux;
+    }
+
+    // Retourne l'ID de l'intervenant
+    public String getIntervenant() {
+        return intervenantId;
+    }
+}
