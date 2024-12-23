@@ -554,9 +554,11 @@ public class Main {
         int choix;
         do {
             System.out.println("\nConsulter l'état des travaux :");
-            System.out.println("1. Voir les travaux en cours");
-            System.out.println("2. Voir les entraves");
-            System.out.println("3. Retour au menu Résident");
+            System.out.println("1. Voir les travaux en cours (API locale / interne)");
+            System.out.println("2. Voir les entraves (API locale / interne)");
+            System.out.println("3. Filtrer travaux par arrondissement (borough)");
+            System.out.println("4. Filtrer entraves par rue (shortname)");
+            System.out.println("5. Retour au menu Résident");
             System.out.print("Choisissez une option : ");
             choix = scanner.nextInt();
             scanner.nextLine();
@@ -569,13 +571,122 @@ public class Main {
                     consulterLesEntraves();
                     break;
                 case 3:
+                    filterTravauxPublicsByBorough();
+                    break;
+                case 4:
+                    filterEntravesPublicsByStreet();
+                    break;
+                case 5:
                     System.out.println("Retour au menu Résident...");
                     break;
                 default:
                     System.out.println("Option invalide, veuillez réessayer.");
             }
-        } while (choix != 3);
+        } while (choix != 5);
     }
+    private static void filterTravauxPublicsByBorough() {
+        System.out.print("Entrez l’ID de l’arrondissement (boroughid) à filtrer : ");
+        String boroughIdRecherche = scanner.nextLine().trim();
+
+        try {
+            String apiUrl = "http://localhost:7000/travaux-publics";
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            if (connection.getResponseCode() == 200) {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream())
+                );
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                JSONArray travauxPublics = new JSONArray(response.toString());
+                boolean trouveAuMoinsUn = false;
+
+                for (int i = 0; i < travauxPublics.length(); i++) {
+                    JSONObject travail = travauxPublics.getJSONObject(i);
+                    String boroughId = travail.optString("boroughid", "N/A");
+                    if (boroughId.equals(boroughIdRecherche)) {
+
+                        System.out.println("ID : " + travail.optString("id", "N/A"));
+                        System.out.println("Arrondissement : " + boroughId);
+                        System.out.println("Statut : " + travail.optString("currentstatus", "N/A"));
+                        System.out.println("Motif : " + travail.optString("reason_category", "N/A"));
+                        System.out.println("Intervenant : " + travail.optString("organizationname", "N/A"));
+                        System.out.println("------------------------");
+                        trouveAuMoinsUn = true;
+                    }
+                }
+
+                if (!trouveAuMoinsUn) {
+                    System.out.println("Aucun travail trouvé pour l'arrondissement " + boroughIdRecherche + ".");
+                }
+
+            } else {
+                System.out.println("Erreur lors de la récupération des travaux publics : "
+                        + connection.getResponseCode());
+            }
+            connection.disconnect();
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+    private static void filterEntravesPublicsByStreet() {
+        System.out.print("Entrez le nom abrégé de la rue (shortname) : ");
+        String rueRecherchee = scanner.nextLine().trim();
+
+        try {
+            String apiUrl = "http://localhost:7000/entraves-publics";
+            URL url = new URL(apiUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            if (connection.getResponseCode() == 200) {
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream())
+                );
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                JSONArray entravesJson = new JSONArray(response.toString());
+                boolean trouve = false;
+
+                for (int i = 0; i < entravesJson.length(); i++) {
+                    JSONObject entrave = entravesJson.getJSONObject(i);
+                    String shortname = entrave.optString("shortname", "");
+                    if (shortname.equalsIgnoreCase(rueRecherchee)) {
+                        System.out.println("ID Travail : " + entrave.optString("id_request", "N/A"));
+                        System.out.println("Rue : " + shortname);
+                        System.out.println("Impact : " + entrave.optString("streetimpacttype", "N/A"));
+                        System.out.println("------------------------");
+                        trouve = true;
+                    }
+                }
+
+                if (!trouve) {
+                    System.out.println("Aucune entrave trouvée pour la rue : " + rueRecherchee + ".");
+                }
+
+            } else {
+                System.out.println("Erreur lors de la récupération des entraves : "
+                        + connection.getResponseCode());
+            }
+            connection.disconnect();
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+
 
 
     private static void soumettreCandidature() {
