@@ -27,7 +27,7 @@ import io.javalin.Javalin;
  *   <li>DELETE "/requetes/{id}" : Supprime une requête de travail.</li>
  *   <li>GET "/travaux-publics" : Récupère les travaux publics depuis une API externe.</li>
  * </ul>
- * </p>
+ *
  *
  * @author
  *         Kamille Denault-Geoffroy

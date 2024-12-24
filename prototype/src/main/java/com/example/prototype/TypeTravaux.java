@@ -20,7 +20,7 @@ package com.example.prototype;
  *   <li>{@code ENTRETIENURBAIN} : Travaux d'entretien des espaces urbains.</li>
  *   <li>{@code ENTRETIENRESEAUXTELECOMMUNICATION} : Travaux liés à l'entretien des réseaux de télécommunication.</li>
  * </ul>
- * </p>
+ *
  */
 public enum TypeTravaux {
     TRAVAUXROUTIERS,
